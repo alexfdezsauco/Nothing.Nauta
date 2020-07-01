@@ -45,7 +45,7 @@
                                 }
                                 catch (Exception e)
                                 {
-                                    Log.Error(e, "Error opening Nauta session");
+                                    Log.Error(e, "Error opening Nauta session.");
                                 }
 
                                 if (sessionData != null)
@@ -56,7 +56,7 @@
                                             sessionData,
                                             new JsonSerializerOptions { WriteIndented = true }));
 
-                                    Log.Information("Nauta session opened for user '{Username}'", username);
+                                    Log.Information("Nauta session opened for user '{Username}'.", username);
                                 }
                             }
                         }
