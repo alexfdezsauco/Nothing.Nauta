@@ -3,13 +3,13 @@ The ultimate DotNet API to manage ETECSA Nauta sessions
 
 # Nothing.Nauta Example Applications
 
-## Nothing.Nauta.Cmd
+## nauta-session
 
-Nothing.Nauta.Cmd is command line tool to manage ETECSA nauta sessions. 
+nauta-session is command line tool to manage ETECSA nauta sessions. 
 
 ### Usage
 
-  Nothing.Nauta.Cmd [options] [command]
+  nauta-session [command] [options]
   
 ### Commands
 
@@ -17,19 +17,19 @@ Nothing.Nauta.Cmd is command line tool to manage ETECSA nauta sessions.
 
 To save credentials use the `credentials` command as follow:
 
-    > Nothing.Nauta.Cmd credentials --username %USERNAME% --password %PASSWORD%
+    > nauta-session credentials --username %USERNAME% --password %PASSWORD%
     
 #### Open Nauta Session
 
 To open a nauta session use the `open` command as follow:
 
-    > Nothing.Nauta.Cmd open
+    > nauta-session open
     
 #### Close Nauta Session
 
 To close a nauta session use the `close` command as follow:
 
-    > Nothing.Nauta.Cmd close
+    > nauta-session close
 
 
 

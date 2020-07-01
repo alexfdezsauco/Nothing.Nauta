@@ -8,8 +8,6 @@
     using System.Net.Http;
     using System.Text.Json;
 
-    using Nothing.Nauta;
-
     using Polly;
 
     using Serilog;
@@ -25,11 +23,11 @@
                     {
                         Log.Information("Closing Nauta session...");
 
-                        var content = await File.ReadAllTextAsync("session.json");
+                        var started = await File.ReadAllTextAsync("session.json");
                         Dictionary<string, string> sessionData = null;
                         try
                         {
-                            sessionData = JsonSerializer.Deserialize<Dictionary<string, string>>(content);
+                            sessionData = JsonSerializer.Deserialize<Dictionary<string, string>>(started);
                         }
                         catch (Exception e)
                         {
@@ -46,8 +44,13 @@
                                         Log.Error(exception, "Error closing Nauta session.");
                                     });
 
+                            DateTime startDateTime = default;
+                            var isTimeAvailable = sessionData.TryGetValue(SessionDataKeys.Started, out started)
+                                                  && DateTime.TryParse(started, out startDateTime);
+
                             var sessionHandler = new SessionHandler();
                             await policy.ExecuteAsync(() => sessionHandler.CloseAsync(sessionData));
+                            var endDateTime = DateTime.Now;
 
                             try
                             {
@@ -58,7 +61,14 @@
                                 Log.Error(e, "Error deleting persisted session");
                             }
 
-                            Log.Information("Nauta session closed.");
+                            if (isTimeAvailable)
+                            {
+                                Log.Information("Nauta session closed. Duration: '{Duration}'.", endDateTime.Subtract(startDateTime));
+                            }
+                            else
+                            {
+                                Log.Information("Nauta session closed.");
+                            }
                         }
                     });
 

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Net;
     using System.Net.Http;
     using System.Text.RegularExpressions;
@@ -20,18 +21,19 @@
         {
             sessionData = new Dictionary<string, string>(sessionData);
 
-            var sessionId = sessionData["JSESSIONID"];
-            sessionData.Remove("JSESSIONID");
+            var sessionId = sessionData[SessionDataKeys.SessionId];
+            sessionData.Remove(SessionDataKeys.SessionId);
+            sessionData.Remove(SessionDataKeys.Started);
 
             sessionData["remove"] = "1";
-            sessionData["loggerId"] = $"{sessionData["loggerId"]}+{sessionData["username"]}";
+            sessionData[SessionDataKeys.LoggerId] = $"{sessionData[SessionDataKeys.LoggerId]}+{sessionData[SessionDataKeys.UserName]}";
 
             var cookieContainer = new CookieContainer();
             using (var handler = new HttpClientHandler { CookieContainer = cookieContainer })
             using (var client = new HttpClient(handler) { BaseAddress = this.baseAddress })
             {
                 var content = new FormUrlEncodedContent(sessionData);
-                cookieContainer.Add(this.baseAddress, new Cookie("JSESSIONID", sessionId));
+                cookieContainer.Add(this.baseAddress, new Cookie(SessionDataKeys.SessionId, sessionId));
                 var httpResponseMessage = await client.PostAsync("/LogoutServlet", content);
 
                 httpResponseMessage.EnsureSuccessStatusCode();
@@ -62,25 +64,28 @@
                     }
                 }
 
-                nameValueCollection["username"] = username;
+                nameValueCollection[SessionDataKeys.UserName] = username;
                 nameValueCollection["password"] = password;
 
                 var formUrlEncodedContent = new FormUrlEncodedContent(nameValueCollection);
 
                 var httpResponseMessage = await client.PostAsync("/LoginServlet", formUrlEncodedContent);
                 httpResponseMessage.EnsureSuccessStatusCode();
+                var startDateTime = DateTime.Now;
 
                 var sessionData = new Dictionary<string, string>();
                 var response = await httpResponseMessage.Content.ReadAsStringAsync();
                 var match = this.regex.Match(response);
 
-                sessionData.Add("JSESSIONID", cookieCollection["JSESSIONID"]?.Value);
-                sessionData.Add("ATTRIBUTE_UUID", match.Groups[1].Value);
+                sessionData.Add(SessionDataKeys.SessionId, cookieCollection[SessionDataKeys.SessionId]?.Value);
+                sessionData.Add(SessionDataKeys.AttributeId, match.Groups[1].Value);
 
-                sessionData.Add("CSRFHW", nameValueCollection["CSRFHW"]);
-                sessionData.Add("wlanuserip", nameValueCollection["wlanuserip"]);
-                sessionData.Add("loggerId", nameValueCollection["loggerId"]);
-                sessionData.Add("username", nameValueCollection["username"]);
+                sessionData.Add(SessionDataKeys.CSRFHW, nameValueCollection[SessionDataKeys.CSRFHW]);
+                sessionData.Add(SessionDataKeys.WLANUserIp, nameValueCollection[SessionDataKeys.WLANUserIp]);
+
+                sessionData.Add(SessionDataKeys.LoggerId, nameValueCollection[SessionDataKeys.LoggerId]);
+                sessionData.Add(SessionDataKeys.UserName, nameValueCollection[SessionDataKeys.UserName]);
+                sessionData.Add(SessionDataKeys.Started, startDateTime.ToString(CultureInfo.InvariantCulture));
 
                 return sessionData;
             }
