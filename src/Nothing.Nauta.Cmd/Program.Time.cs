@@ -36,12 +36,13 @@
 
                         if (sessionData != null)
                         {
-                            var policy = Policy.Handle<HttpRequestException>().Or<FormatException>().WaitAndRetryForeverAsync(
-                                retryAttempt => TimeSpan.FromSeconds(5),
-                                (exception, retry, timeSpan) =>
-                                    {
-                                        Log.Error(exception, "Error query time in the Nauta session.");
-                                    });
+                            var policy = Policy.Handle<HttpRequestException>().Or<FormatException>()
+                                .WaitAndRetryForeverAsync(
+                                    retryAttempt => TimeSpan.FromSeconds(5),
+                                    (exception, retry, timeSpan) =>
+                                        {
+                                            Log.Error(exception, "Error query time in the Nauta session.");
+                                        });
 
                             DateTime startDateTime = default;
                             var isTimeAvailable = sessionData.TryGetValue(SessionDataKeys.Started, out var started)
@@ -51,15 +52,17 @@
                             var remainingTime =
                                 await policy.ExecuteAsync(() => sessionHandler.RemainingTimeAsync(sessionData));
 
-                            if (isTimeAvailable)
-                            {
-                                var elapsedTime = DateTime.Now.Subtract(startDateTime);
-                                Log.Information("Elapsed Time: '{ElapsedTime}'.", $"{(int)elapsedTime.TotalHours}hrs {elapsedTime:mm}mn {elapsedTime:ss}sec");
-                            }
-
                             Log.Information(
                                 "Remaining Time: '{RemainingTime}'.",
                                 $"{(int)remainingTime.TotalHours}hrs {remainingTime:mm}mn {remainingTime:ss}sec");
+
+                            if (isTimeAvailable)
+                            {
+                                var elapsedTime = DateTime.Now.Subtract(startDateTime);
+                                Log.Information(
+                                    "Elapsed Time: '{ElapsedTime}'.",
+                                    $"{(int)elapsedTime.TotalHours}hrs {elapsedTime:mm}mn {elapsedTime:ss}sec");
+                            }
                         }
                     });
 
