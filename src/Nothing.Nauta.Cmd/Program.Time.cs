@@ -43,12 +43,22 @@
                                         Log.Error(exception, "Error query time in the Nauta session.");
                                     });
 
+                            DateTime startDateTime = default;
+                            var isTimeAvailable = sessionData.TryGetValue(SessionDataKeys.Started, out var started)
+                                                  && DateTime.TryParse(started, out startDateTime);
+
                             var sessionHandler = new SessionHandler();
                             var remainingTime =
                                 await policy.ExecuteAsync(() => sessionHandler.RemainingTimeAsync(sessionData));
 
+                            if (isTimeAvailable)
+                            {
+                                var elapsedTime = DateTime.Now.Subtract(startDateTime);
+                                Log.Information("Elapsed Time: '{ElapsedTime}'.", $"{(int)elapsedTime.TotalHours}hrs {elapsedTime:mm}mn {elapsedTime:ss}sec");
+                            }
+
                             Log.Information(
-                                "Remaining Time: '{Time}'",
+                                "Remaining Time: '{RemainingTime}'.",
                                 $"{(int)remainingTime.TotalHours}hrs {remainingTime:mm}mn {remainingTime:ss}sec");
                         }
                     });
