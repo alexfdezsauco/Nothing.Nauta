@@ -44,9 +44,12 @@
                                     });
 
                             var sessionHandler = new SessionHandler();
-                            var remainingTime = await policy.ExecuteAsync(() => sessionHandler.RemainingTimeAsync(sessionData));
+                            var remainingTime =
+                                await policy.ExecuteAsync(() => sessionHandler.RemainingTimeAsync(sessionData));
 
-                            Log.Information("Remaining Time: '{Time}'", remainingTime);
+                            Log.Information(
+                                "Remaining Time: '{Time}'",
+                                $"{(int)remainingTime.TotalHours}hrs {remainingTime:mm}mn {remainingTime:ss}sec");
                         }
                     });
 
