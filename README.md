@@ -24,13 +24,15 @@ To save credentials use the `credentials` command as follow:
 To open a nauta session use the `open` command as follow:
 
     > nauta-session open
+
+#### Query Remaining Time From Nauta Session
+
+To query remaining time from the nauta session use the `time` command as follow:
+
+    > nauta-session time
     
 #### Close Nauta Session
 
 To close a nauta session use the `close` command as follow:
 
     > nauta-session close
-
-
-
-
