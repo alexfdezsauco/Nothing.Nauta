@@ -18,7 +18,7 @@
             command.Handler = CommandHandler.Create(
                 async () =>
                     {
-                        Log.Information("Opening Nauta session");
+                        Log.Information("Opening Nauta session...");
 
                         Dictionary<string, string> sessionData = null;
                         if (File.Exists("credentials.json"))

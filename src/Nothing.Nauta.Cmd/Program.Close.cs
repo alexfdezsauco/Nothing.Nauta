@@ -23,7 +23,7 @@
             command.Handler = CommandHandler.Create(
                 async () =>
                     {
-                        Log.Information("Closing Nauta session");
+                        Log.Information("Closing Nauta session...");
 
                         var content = await File.ReadAllTextAsync("session.json");
                         Dictionary<string, string> sessionData = null;
@@ -43,7 +43,7 @@
                                 retryAttempt => TimeSpan.FromSeconds(5),
                                 (exception, retry, timeSpan) =>
                                     {
-                                        Log.Error(exception, "Error closing Nauta session");
+                                        Log.Error(exception, "Error closing Nauta session.");
                                     });
 
                             var sessionHandler = new SessionHandler();

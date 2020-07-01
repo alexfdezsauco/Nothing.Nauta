@@ -24,6 +24,8 @@
             command.Handler = CommandHandler.Create<string, string>(
                 async (username, password) =>
                     {
+                        Log.Information("Saving Nauta session credentials...");
+
                         var credentials = new Dictionary<string, string>
                                               {
                                                   ["username"] = username, ["password"] = password
@@ -32,6 +34,8 @@
                         try
                         {
                             await File.WriteAllTextAsync("credentials.json", JsonSerializer.Serialize(credentials));
+
+                            Log.Information("Nauta session credentials for user 'Username' saved.", username);
                         }
                         catch (Exception e)
                         {
