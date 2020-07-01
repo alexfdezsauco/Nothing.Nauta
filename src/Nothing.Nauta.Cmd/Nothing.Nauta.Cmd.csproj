@@ -3,6 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AssemblyName>nauta-session</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Polly" Version="7.2.1" />
