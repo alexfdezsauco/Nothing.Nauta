@@ -23,6 +23,8 @@
             command.Handler = CommandHandler.Create(
                 async () =>
                     {
+                        Log.Information("Closing Nauta session");
+
                         var content = await File.ReadAllTextAsync("session.json");
                         Dictionary<string, string> sessionData = null;
                         try
@@ -55,6 +57,8 @@
                             {
                                 Log.Error(e, "Error deleting persisted session");
                             }
+
+                            Log.Information("Nauta session closed.");
                         }
                     });
 

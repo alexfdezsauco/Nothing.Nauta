@@ -21,8 +21,8 @@
 
             var command = new RootCommand { Description = "Nauta command line tool." };
 
-            command.AddCommand(global::Nothing.Nauta.Cmd.Program.CreateCredentialsCommand());
-            command.AddCommand(global::Nothing.Nauta.Cmd.Program.CreateOpenCommand());
+            command.AddCommand(CreateCredentialsCommand());
+            command.AddCommand(CreateOpenCommand());
             command.AddCommand(CreateCloseCommand());
 
             // Show commandline help unless a subcommand was used.

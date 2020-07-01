@@ -7,8 +7,6 @@
     using System.IO;
     using System.Text.Json;
 
-    using Nothing.Nauta;
-
     using Serilog;
 
     internal static partial class Program
@@ -20,6 +18,8 @@
             command.Handler = CommandHandler.Create(
                 async () =>
                     {
+                        Log.Information("Opening Nauta session");
+
                         Dictionary<string, string> sessionData = null;
                         if (File.Exists("credentials.json"))
                         {
@@ -35,14 +35,13 @@
                                 Log.Error(e, "Error deserializing credentials");
                             }
 
-                            if (credentials != null)
+                            if (credentials != null && credentials.TryGetValue("username", out var username)
+                                                    && credentials.TryGetValue("password", out var password))
                             {
                                 var sessionHandler = new SessionHandler();
                                 try
                                 {
-                                    sessionData = await sessionHandler.OpenAsync(
-                                                      credentials["username"],
-                                                      credentials["password"]);
+                                    sessionData = await sessionHandler.OpenAsync(username, password);
                                 }
                                 catch (Exception e)
                                 {
@@ -56,6 +55,8 @@
                                         JsonSerializer.Serialize(
                                             sessionData,
                                             new JsonSerializerOptions { WriteIndented = true }));
+
+                                    Log.Information("Nauta session opened for user '{Username}'", username);
                                 }
                             }
                         }
