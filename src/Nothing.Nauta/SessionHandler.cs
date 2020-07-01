@@ -26,7 +26,8 @@
             sessionData.Remove(SessionDataKeys.Started);
 
             sessionData["remove"] = "1";
-            sessionData[SessionDataKeys.LoggerId] = $"{sessionData[SessionDataKeys.LoggerId]}+{sessionData[SessionDataKeys.UserName]}";
+            sessionData[SessionDataKeys.LoggerId] =
+                $"{sessionData[SessionDataKeys.LoggerId]}+{sessionData[SessionDataKeys.UserName]}";
 
             var cookieContainer = new CookieContainer();
             using (var handler = new HttpClientHandler { CookieContainer = cookieContainer })
@@ -88,6 +89,44 @@
                 sessionData.Add(SessionDataKeys.Started, startDateTime.ToString(CultureInfo.InvariantCulture));
 
                 return sessionData;
+            }
+        }
+
+        public async Task<TimeSpan> RemainingTimeAsync(Dictionary<string, string> sessionData)
+        {
+            sessionData = new Dictionary<string, string>(sessionData);
+
+            var sessionId = sessionData[SessionDataKeys.SessionId];
+            sessionData.Remove(SessionDataKeys.SessionId);
+            sessionData.Remove(SessionDataKeys.Started);
+
+            sessionData["op"] = "getLeftTime";
+            sessionData[SessionDataKeys.LoggerId] =
+                $"{sessionData[SessionDataKeys.LoggerId]}+{sessionData[SessionDataKeys.UserName]}";
+
+            var cookieContainer = new CookieContainer();
+            using (var handler = new HttpClientHandler { CookieContainer = cookieContainer })
+            using (var client = new HttpClient(handler) { BaseAddress = this.baseAddress })
+            {
+                var content = new FormUrlEncodedContent(sessionData);
+                cookieContainer.Add(this.baseAddress, new Cookie(SessionDataKeys.SessionId, sessionId));
+                var httpResponseMessage = await client.PostAsync("/EtecsaQueryServlet", content);
+
+                httpResponseMessage.EnsureSuccessStatusCode();
+
+                var response = await httpResponseMessage.Content.ReadAsStringAsync();
+
+                var responseParts = response.Split(':');
+                for (var i = 0; i < responseParts.Length; i++)
+                {
+                    responseParts[i] = responseParts[i].TrimStart('0');
+                    if (responseParts[i].Length == 0)
+                    {
+                        responseParts[i] = "0";
+                    }
+                }
+
+                return new TimeSpan(int.Parse(responseParts[0]), int.Parse(responseParts[1]), int.Parse(responseParts[2]));
             }
         }
     }

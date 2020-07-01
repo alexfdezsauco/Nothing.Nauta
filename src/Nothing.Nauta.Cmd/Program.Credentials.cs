@@ -33,7 +33,11 @@
 
                         try
                         {
-                            await File.WriteAllTextAsync("credentials.json", JsonSerializer.Serialize(credentials));
+                            await File.WriteAllTextAsync(
+                                "credentials.json",
+                                JsonSerializer.Serialize(
+                                    credentials,
+                                    new JsonSerializerOptions { WriteIndented = true }));
 
                             Log.Information("Nauta session credentials for user 'Username' saved.", username);
                         }

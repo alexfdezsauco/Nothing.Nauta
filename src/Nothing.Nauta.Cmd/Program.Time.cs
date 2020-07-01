@@ -14,14 +14,14 @@
 
     internal static partial class Program
     {
-        private static Command CreateCloseCommand()
+        private static Command CreateTimeCommand()
         {
-            var command = new Command("close", "Close Nauta session");
+            var command = new Command("time", "Display the remaining time from the opened Nauta session");
 
             command.Handler = CommandHandler.Create(
                 async () =>
                     {
-                        Log.Information("Closing Nauta session...");
+                        Log.Information("Querying remaining time from the Nauta session...");
 
                         var sessionContent = await File.ReadAllTextAsync("session.json");
                         Dictionary<string, string> sessionData = null;
@@ -36,39 +36,17 @@
 
                         if (sessionData != null)
                         {
-                            // TODO: Improve this
                             var policy = Policy.Handle<HttpRequestException>().WaitAndRetryForeverAsync(
                                 retryAttempt => TimeSpan.FromSeconds(5),
                                 (exception, retry, timeSpan) =>
                                     {
-                                        Log.Error(exception, "Error closing Nauta session.");
+                                        Log.Error(exception, "Error query time in the Nauta session.");
                                     });
 
-                            DateTime startDateTime = default;
-                            var isTimeAvailable = sessionData.TryGetValue(SessionDataKeys.Started, out var started)
-                                                  && DateTime.TryParse(started, out startDateTime);
-
                             var sessionHandler = new SessionHandler();
-                            await policy.ExecuteAsync(() => sessionHandler.CloseAsync(sessionData));
-                            var endDateTime = DateTime.Now;
+                            var remainingTime = await policy.ExecuteAsync(() => sessionHandler.RemainingTimeAsync(sessionData));
 
-                            try
-                            {
-                                File.Delete("session.json");
-                            }
-                            catch (Exception e)
-                            {
-                                Log.Error(e, "Error deleting persisted session");
-                            }
-
-                            if (isTimeAvailable)
-                            {
-                                Log.Information("Nauta session closed. Duration: '{Duration}'.", endDateTime.Subtract(startDateTime));
-                            }
-                            else
-                            {
-                                Log.Information("Nauta session closed.");
-                            }
+                            Log.Information("Remaining Time: '{Time}'", remainingTime);
                         }
                     });
 

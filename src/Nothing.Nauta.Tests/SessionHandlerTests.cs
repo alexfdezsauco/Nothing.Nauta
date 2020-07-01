@@ -30,5 +30,15 @@ namespace Nauta.Tests
             var sessionHandler = new SessionHandler();
             await sessionHandler.CloseAsync(sessionData);
         }
+
+        [TestMethod]
+        public async Task Time()
+        {
+            var content = await File.ReadAllTextAsync("session.json");
+            var sessionData = JsonConvert.DeserializeObject<Dictionary<string, string>>(content);
+            
+            var sessionHandler = new SessionHandler();
+            await sessionHandler.RemainingTimeAsync(sessionData);
+        }
     }
 }
