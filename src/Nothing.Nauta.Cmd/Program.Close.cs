@@ -63,7 +63,8 @@
 
                             if (isTimeAvailable)
                             {
-                                Log.Information("Nauta session closed. Duration: '{Duration}'.", endDateTime.Subtract(startDateTime));
+                                var elapsedTime = endDateTime.Subtract(startDateTime);
+                                Log.Information("Nauta session closed. Duration: '{Duration}'.", $"{(int)elapsedTime.TotalHours}hrs {elapsedTime:mm}mn {elapsedTime:ss}sec");
                             }
                             else
                             {
