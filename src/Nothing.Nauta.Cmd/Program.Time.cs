@@ -36,7 +36,7 @@
 
                         if (sessionData != null)
                         {
-                            var policy = Policy.Handle<HttpRequestException>().WaitAndRetryForeverAsync(
+                            var policy = Policy.Handle<HttpRequestException>().Or<FormatException>().WaitAndRetryForeverAsync(
                                 retryAttempt => TimeSpan.FromSeconds(5),
                                 (exception, retry, timeSpan) =>
                                     {

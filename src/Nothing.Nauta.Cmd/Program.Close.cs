@@ -49,6 +49,9 @@
                                                   && DateTime.TryParse(started, out startDateTime);
 
                             var sessionHandler = new SessionHandler();
+
+                            var remainingTime = await policy.ExecuteAsync(() => sessionHandler.RemainingTimeAsync(sessionData));
+
                             await policy.ExecuteAsync(() => sessionHandler.CloseAsync(sessionData));
                             var endDateTime = DateTime.Now;
 
@@ -60,6 +63,10 @@
                             {
                                 Log.Error(e, "Error deleting persisted session");
                             }
+
+                            Log.Information(
+                                "Remaining Time: '{RemainingTime}'.",
+                                $"{(int)remainingTime.TotalHours}hrs {remainingTime:mm}mn {remainingTime:ss}sec");
 
                             if (isTimeAvailable)
                             {

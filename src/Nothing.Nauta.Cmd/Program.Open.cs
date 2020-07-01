@@ -5,7 +5,10 @@
     using System.CommandLine;
     using System.CommandLine.Invocation;
     using System.IO;
+    using System.Net.Http;
     using System.Text.Json;
+
+    using Polly;
 
     using Serilog;
 
@@ -57,6 +60,20 @@
                                             new JsonSerializerOptions { WriteIndented = true }));
 
                                     Log.Information("Nauta session opened for user '{Username}'.", username);
+
+                                    var policy = Policy.Handle<HttpRequestException>().Or<FormatException>()
+                                        .WaitAndRetryForeverAsync(
+                                            retryAttempt => TimeSpan.FromSeconds(5),
+                                            (exception, retry, timeSpan) =>
+                                                {
+                                                    Log.Error(exception, "Error query time in the Nauta session.");
+                                                });
+
+                                    var remainingTime =
+                                        await policy.ExecuteAsync(() => sessionHandler.RemainingTimeAsync(sessionData));
+                                    Log.Information(
+                                        "Remaining Time: '{RemainingTime}'.",
+                                        $"{(int)remainingTime.TotalHours}hrs {remainingTime:mm}mn {remainingTime:ss}sec");
                                 }
                             }
                         }
