@@ -15,8 +15,6 @@
     {
         private readonly Uri baseAddress = new Uri("https://secure.etecsa.net:8443/");
 
-        private readonly Regex regex = new Regex("ATTRIBUTE_UUID=([^&]+)", RegexOptions.Compiled);
-
         public async Task CloseAsync(Dictionary<string, string> sessionData)
         {
             sessionData = new Dictionary<string, string>(sessionData);
@@ -72,11 +70,19 @@
 
                 var httpResponseMessage = await client.PostAsync("/LoginServlet", formUrlEncodedContent);
                 httpResponseMessage.EnsureSuccessStatusCode();
-                var startDateTime = DateTime.Now;
 
-                var sessionData = new Dictionary<string, string>();
                 var response = await httpResponseMessage.Content.ReadAsStringAsync();
-                var match = this.regex.Match(response);
+
+                if (response.Contains("alert(\"El usuario ya está conectado.\");"))
+                {
+                    throw new InvalidOperationException("A session is already opened");
+                }
+
+                var startDateTime = DateTime.Now;
+                var sessionData = new Dictionary<string, string>();
+
+                Regex regex = new Regex("ATTRIBUTE_UUID=([^&]+)");
+                var match = regex.Match(response);
 
                 sessionData.Add(SessionDataKeys.SessionId, cookieCollection[SessionDataKeys.SessionId]?.Value);
                 sessionData.Add(SessionDataKeys.AttributeId, match.Groups[1].Value);
@@ -126,7 +132,10 @@
                     }
                 }
 
-                return new TimeSpan(int.Parse(responseParts[0]), int.Parse(responseParts[1]), int.Parse(responseParts[2]));
+                return new TimeSpan(
+                    int.Parse(responseParts[0]),
+                    int.Parse(responseParts[1]),
+                    int.Parse(responseParts[2]));
             }
         }
     }
