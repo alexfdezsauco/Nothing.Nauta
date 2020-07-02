@@ -11,8 +11,6 @@
     using AngleSharp;
     using AngleSharp.Html.Dom;
 
-    using Serilog;
-
     public class SessionHandler
     {
         private readonly Uri baseAddress = new Uri("https://secure.etecsa.net:8443/");
@@ -38,6 +36,8 @@
                 var httpResponseMessage = await client.PostAsync("/LogoutServlet", content);
 
                 httpResponseMessage.EnsureSuccessStatusCode();
+                var response = await httpResponseMessage.Content.ReadAsStringAsync();
+                AlertMessages.Process(response);
             }
         }
 
@@ -74,42 +74,7 @@
                 httpResponseMessage.EnsureSuccessStatusCode();
 
                 var response = await httpResponseMessage.Content.ReadAsStringAsync();
-
-                var alertRegex = new Regex("alert[(]\"([^\"]+)\"[)];");
-                var alertMatch = alertRegex.Match(response);
-                if (alertMatch.Success)
-                {
-                    var message = alertMatch.Groups[1].Value.Trim();
-
-                    if (message == AlertMessages.UserAlreadyConnected)
-                    {
-                        throw new InvalidOperationException("A session is already open");
-                    }
-
-                    if (message == AlertMessages.AnormalAccountStatus)
-                    {
-                        throw new InvalidOperationException("Anormal account status");
-                    }
-
-                    if (message == AlertMessages.UserOrPasswordIncorrect)
-                    {
-                        throw new UnauthorizedAccessException("Incorrect username or password");
-                    }
-
-                    if (message.StartsWith(AlertMessages.UserCouldNotBeAuthorized))
-                    {
-                        throw new UnauthorizedAccessException("User couldn't be authorized");
-                    }
-
-                    if (message == AlertMessages.TimeAdjustmentRequired)
-                    {
-                        Log.Warning("Time adjustment is required.");
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException(message);
-                    }
-                }
+                AlertMessages.Process(response);
 
                 var startDateTime = DateTime.Now;
                 var sessionData = new Dictionary<string, string>();
@@ -154,6 +119,7 @@
                 httpResponseMessage.EnsureSuccessStatusCode();
 
                 var response = await httpResponseMessage.Content.ReadAsStringAsync();
+                AlertMessages.Process(response);
 
                 var responseParts = response.Split(':');
                 for (var i = 0; i < responseParts.Length; i++)
