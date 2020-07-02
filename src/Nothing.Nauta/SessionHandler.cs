@@ -11,6 +11,8 @@
     using AngleSharp;
     using AngleSharp.Html.Dom;
 
+    using Serilog;
+
     public class SessionHandler
     {
         private readonly Uri baseAddress = new Uri("https://secure.etecsa.net:8443/");
@@ -73,15 +75,46 @@
 
                 var response = await httpResponseMessage.Content.ReadAsStringAsync();
 
-                if (response.Contains("alert(\"El usuario ya está conectado.\");"))
+                var alertRegex = new Regex("alert[(]\"([^\"]+)\"[)];");
+                var alertMatch = alertRegex.Match(response);
+                if (alertMatch.Success)
                 {
-                    throw new InvalidOperationException("A session is already open");
+                    var message = alertMatch.Groups[1].Value.Trim();
+
+                    if (message == AlertMessages.UserAlreadyConnected)
+                    {
+                        throw new InvalidOperationException("A session is already open");
+                    }
+
+                    if (message == AlertMessages.AnormalAccountStatus)
+                    {
+                        throw new InvalidOperationException("Anormal account status");
+                    }
+
+                    if (message == AlertMessages.UserOrPasswordIncorrect)
+                    {
+                        throw new UnauthorizedAccessException("Incorrect username or password");
+                    }
+
+                    if (message.StartsWith(AlertMessages.UserCouldNotBeAuthorized))
+                    {
+                        throw new UnauthorizedAccessException("User couldn't be authorized");
+                    }
+
+                    if (message == AlertMessages.TimeAdjustmentRequired)
+                    {
+                        Log.Warning("Time adjustment is required.");
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException(message);
+                    }
                 }
 
                 var startDateTime = DateTime.Now;
                 var sessionData = new Dictionary<string, string>();
 
-                Regex regex = new Regex("ATTRIBUTE_UUID=([^&]+)");
+                var regex = new Regex("ATTRIBUTE_UUID=([^&]+)");
                 var match = regex.Match(response);
 
                 sessionData.Add(SessionDataKeys.SessionId, cookieCollection[SessionDataKeys.SessionId]?.Value);

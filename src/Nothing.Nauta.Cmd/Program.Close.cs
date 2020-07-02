@@ -80,7 +80,7 @@
                         }
                         else
                         {
-                            Log.Information("This command requires an openn session. Open a nauta session first with open command.");
+                            Log.Information("This command requires an open session. Open a nauta session first with open command.");
                         }
                     });
 

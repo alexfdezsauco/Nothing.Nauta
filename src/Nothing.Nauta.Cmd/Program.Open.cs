@@ -26,11 +26,10 @@
                         Dictionary<string, string> sessionData = null;
                         if (File.Exists("credentials.json"))
                         {
-                            var content = await File.ReadAllTextAsync("credentials.json");
                             Dictionary<string, string> credentials = null;
-
                             try
                             {
+                                var content = await File.ReadAllTextAsync("credentials.json");
                                 credentials = JsonSerializer.Deserialize<Dictionary<string, string>>(content);
                             }
                             catch (Exception e)

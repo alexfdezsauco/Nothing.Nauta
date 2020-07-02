@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="AngleSharp" Version="1.0.0-alpha-825" />
+    <PackageReference Include="Serilog" Version="2.9.0" />
   </ItemGroup>
 
 </Project>
