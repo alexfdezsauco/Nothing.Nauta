@@ -23,10 +23,10 @@
                     {
                         Log.Information("Closing Nauta session...");
 
-                        var sessionContent = await File.ReadAllTextAsync("session.json");
                         Dictionary<string, string> sessionData = null;
                         try
                         {
+                            var sessionContent = await File.ReadAllTextAsync("session.json");
                             sessionData = JsonSerializer.Deserialize<Dictionary<string, string>>(sessionContent);
                         }
                         catch (Exception e)
@@ -77,6 +77,10 @@
                             {
                                 Log.Information("Nauta session closed.");
                             }
+                        }
+                        else
+                        {
+                            Log.Information("This command requires an openn session. Open a nauta session first with open command.");
                         }
                     });
 

@@ -16,17 +16,17 @@
     {
         private static Command CreateTimeCommand()
         {
-            var command = new Command("time", "Display the remaining time from the opened Nauta session");
+            var command = new Command("time", "Display the remaining time from the open Nauta session");
 
             command.Handler = CommandHandler.Create(
                 async () =>
                     {
                         Log.Information("Querying remaining time from the Nauta session...");
 
-                        var sessionContent = await File.ReadAllTextAsync("session.json");
                         Dictionary<string, string> sessionData = null;
                         try
                         {
+                            var sessionContent = await File.ReadAllTextAsync("session.json");
                             sessionData = JsonSerializer.Deserialize<Dictionary<string, string>>(sessionContent);
                         }
                         catch (Exception e)
@@ -63,6 +63,10 @@
                                     "Elapsed Time: '{ElapsedTime}'.",
                                     $"{(int)elapsedTime.TotalHours}hrs {elapsedTime:mm}mn {elapsedTime:ss}sec");
                             }
+                        }
+                        else
+                        {
+                            Log.Information("This command requires an open session. Open a nauta session first with open command.");
                         }
                     });
 

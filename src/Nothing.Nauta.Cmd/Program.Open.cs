@@ -59,7 +59,7 @@
                                             sessionData,
                                             new JsonSerializerOptions { WriteIndented = true }));
 
-                                    Log.Information("Nauta session opened for user '{Username}'.", username);
+                                    Log.Information("Nauta session open for user '{Username}'.", username);
 
                                     var policy = Policy.Handle<HttpRequestException>().Or<FormatException>()
                                         .WaitAndRetryForeverAsync(
@@ -79,7 +79,7 @@
                         }
                         else
                         {
-                            Log.Error("Save credentials first with credential command.");
+                            Log.Information("Save credentials first with credential command.");
                         }
                     });
 
