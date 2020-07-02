@@ -75,7 +75,7 @@
 
                 if (response.Contains("alert(\"El usuario ya está conectado.\");"))
                 {
-                    throw new InvalidOperationException("A session is already opened");
+                    throw new InvalidOperationException("A session is already open");
                 }
 
                 var startDateTime = DateTime.Now;
