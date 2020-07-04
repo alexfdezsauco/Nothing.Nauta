@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
 
@@ -78,11 +79,14 @@
                     action: s => throw new InvalidOperationException(s)));
         }
 
-        public static async Task Process(string content)
+        public static async Task ProcessAsync(string content)
         {
             foreach (var processor in Processors)
             {
-                await processor.Execute(content);
+                if (await processor.ExecuteAsync(content))
+                {
+                    break;
+                }
             }
         }
     }

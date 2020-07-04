@@ -17,14 +17,16 @@
             this.action = action;
         }
 
-        public Task Execute(string content)
+        public async Task<bool> ExecuteAsync(string content)
         {
+            var executed = false;
             if (this.predicate(content))
             {
                 this.action(content);
+                executed = true;
             }
 
-            return Task.CompletedTask;
+            return executed;
         }
     }
 }

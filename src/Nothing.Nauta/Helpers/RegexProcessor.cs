@@ -28,8 +28,9 @@
             this.action = action;
         }
 
-        public Task Execute(string content)
+        public async Task<bool> ExecuteAsync(string content)
         {
+            bool executed = false;
             var match = this.regex.Match(content);
             if (match.Success)
             {
@@ -37,22 +38,27 @@
                 if (invoke.HasValue && invoke.Value)
                 {
                     this.action(match.Groups[0].Value);
+                    executed = true;
                 }
 
-                if (this.groupPredicate != null)
+                if (!executed && this.groupPredicate != null)
                 {
-                    for (var index = 1; index < match.Groups.Count; index++)
+                    int index = 1;
+                    while (!executed && index < match.Groups.Count)
                     {
                         var matchGroup = match.Groups[index];
                         if (this.groupPredicate(matchGroup))
                         {
-                            this.action(match.Groups[0].Value);
+                            this.action(matchGroup.Value);
+                            executed = true;
                         }
+
+                        index++;
                     }
                 }
             }
 
-            return Task.CompletedTask;
+            return executed;
         }
     }
 }

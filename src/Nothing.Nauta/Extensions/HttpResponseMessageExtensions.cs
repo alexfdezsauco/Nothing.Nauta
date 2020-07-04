@@ -12,7 +12,7 @@
             httpResponseMessage.EnsureSuccessStatusCode();
 
             var response = await httpResponseMessage.Content.ReadAsStringAsync();
-            await ResponseProcessors.Process(response);
+            await ResponseProcessors.ProcessAsync(response);
 
             return response;
         }
