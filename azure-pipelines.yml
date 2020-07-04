@@ -10,5 +10,5 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- script: ./build.sh -Target "Pack"
+- script: ./build.sh -Target=Pack
   displayName: 'Build'
