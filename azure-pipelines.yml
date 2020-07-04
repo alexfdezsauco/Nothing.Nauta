@@ -10,5 +10,5 @@ pool:
   vmImage: 'windows-latest'
 
 steps:
-- script: ./build.ps1 -Target "Build"
+- script: powershell -ExecutionPolicy ByPass -File .\build.ps1 -script .\build.cake -target "Build" -verbosity normal
   displayName: 'Build'
