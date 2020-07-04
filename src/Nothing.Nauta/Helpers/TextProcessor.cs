@@ -17,7 +17,7 @@
             this.action = action;
         }
 
-        public async Task<bool> ExecuteAsync(string content)
+        public bool Execute(string content)
         {
             var executed = false;
             if (this.predicate(content))

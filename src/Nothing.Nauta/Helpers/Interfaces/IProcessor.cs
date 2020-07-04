@@ -5,6 +5,6 @@ namespace Nothing.Nauta.Helpers.Interfaces
 
     public interface IProcessor
     {
-        Task<bool> ExecuteAsync(string content);
+        bool Execute(string content);
     }
 }

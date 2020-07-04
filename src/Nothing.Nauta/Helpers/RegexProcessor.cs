@@ -28,7 +28,7 @@
             this.action = action;
         }
 
-        public async Task<bool> ExecuteAsync(string content)
+        public bool Execute(string content)
         {
             bool executed = false;
             var match = this.regex.Match(content);

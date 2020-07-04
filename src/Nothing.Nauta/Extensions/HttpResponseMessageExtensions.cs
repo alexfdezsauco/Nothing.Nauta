@@ -10,10 +10,8 @@
         public static async Task<string> EnsureGetStringAsync(this HttpResponseMessage httpResponseMessage)
         {
             httpResponseMessage.EnsureSuccessStatusCode();
-
             var response = await httpResponseMessage.Content.ReadAsStringAsync();
-            await ResponseProcessors.ProcessAsync(response);
-
+            ResponseProcessors.Process(response);
             return response;
         }
     }

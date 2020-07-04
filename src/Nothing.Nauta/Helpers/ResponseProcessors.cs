@@ -2,9 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Text.RegularExpressions;
-    using System.Threading.Tasks;
 
     using Nothing.Nauta.Helpers.Interfaces;
 
@@ -79,11 +77,11 @@
                     action: s => throw new InvalidOperationException(s)));
         }
 
-        public static async Task ProcessAsync(string content)
+        public static void Process(string content)
         {
             foreach (var processor in Processors)
             {
-                if (await processor.ExecuteAsync(content))
+                if (processor.Execute(content))
                 {
                     break;
                 }
