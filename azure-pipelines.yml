@@ -12,7 +12,7 @@ pool:
   vmImage: 'windows-latest'
 
 steps:
-- script: powershell -ExecutionPolicy ByPass -File .\build.ps1 -script .\build.cake -target "Build" -verbosity normal
+- script: powershell -ExecutionPolicy ByPass -File .\build.ps1 -script .\build.cake -target "Pack" -verbosity normal
   displayName: 'Build'
 
 - task: NuGetCommand@2
