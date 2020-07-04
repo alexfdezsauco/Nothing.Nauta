@@ -13,9 +13,10 @@ pool:
 steps:
 - script: powershell -ExecutionPolicy ByPass -File .\build.ps1 -script .\build.cake -target "Build" -verbosity normal
   displayName: 'Build'
+
 - task: NuGetCommand@2
   inputs:
     command: 'push'
-    packagesToPush: 'output/nuget/*.nupkg'
+    packagesToPush: './output/nuget/*.nupkg'
     nuGetFeedType: 'external'
     publishFeedCredentials: 'NuGet'
