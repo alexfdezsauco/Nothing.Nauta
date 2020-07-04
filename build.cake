@@ -4,12 +4,12 @@ var target = Argument("target", "Default");
 var buildConfiguration = Argument("Configuration", "Release");
 
 Setup (context => {
-  context.Tools.RegisterFile("./tools/GitVersion.CommandLine/tools/GitVersion.exe");
+  context.Tools.RegisterFile("./tools/GitVersion.CommandLine/tools/gitversion.exe");
 });
 
-Task ("UpdateVersion")
+Task("UpdateVersion")
   .Does (() => {
-    FilePath gitVersionPath = Context.Tools.Resolve ("GitVersion.exe");
+    FilePath gitVersionPath = Context.Tools.Resolve("gitversion.exe");
     StartProcess (gitVersionPath, new ProcessSettings {
       Arguments = new ProcessArgumentBuilder ()
         .Append ("/output")
@@ -26,10 +26,10 @@ Task ("UpdateVersion")
         RedirectStandardOutput = true
     }, out redirectedStandardOutput);
 
-    NuGetVersionV2 = redirectedStandardOutput.FirstOrDefault (s => s.Contains ("NuGetVersionV2")).Split (':') [1].Trim (',').Trim ('"');
+    NuGetVersionV2 = redirectedStandardOutput.FirstOrDefault(s => s.Contains("NuGetVersionV2")).Split(':')[1].Trim(',').Trim('"');
   });
 
-  Task("Restore")
+Task("Restore")
   .Does(() => {
 
   });
@@ -51,7 +51,7 @@ Task("Build")
   });  
 
 Task("Pack")
-  .IsDependentOn ("Build")
+  .IsDependentOn("Build")
   .Does (() => 
   {
       for(int i = 0; i < ComponentProjects.Length; i++)
@@ -70,11 +70,5 @@ Task("Pack")
         DotNetCorePack(componentProject, settings);
       }
   });
-
-Task("Default")
-  .Does(() =>
-{
-  Information("Hello World!");
-});
 
 RunTarget(target);
