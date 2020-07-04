@@ -11,6 +11,9 @@
     using AngleSharp;
     using AngleSharp.Html.Dom;
 
+    using Nothing.Nauta.Extensions;
+    using Nothing.Nauta.Helpers;
+
     public class SessionHandler
     {
         private readonly Uri baseAddress = new Uri("https://secure.etecsa.net:8443/");
@@ -34,10 +37,7 @@
                 var content = new FormUrlEncodedContent(sessionData);
                 cookieContainer.Add(this.baseAddress, new Cookie(SessionDataKeys.SessionId, sessionId));
                 var httpResponseMessage = await client.PostAsync("/LogoutServlet", content);
-
-                httpResponseMessage.EnsureSuccessStatusCode();
-                var response = await httpResponseMessage.Content.ReadAsStringAsync();
-                AlertMessages.Process(response);
+                await httpResponseMessage.EnsureGetStringAsync();
             }
         }
 
@@ -71,10 +71,7 @@
                 var formUrlEncodedContent = new FormUrlEncodedContent(nameValueCollection);
 
                 var httpResponseMessage = await client.PostAsync("/LoginServlet", formUrlEncodedContent);
-                httpResponseMessage.EnsureSuccessStatusCode();
-
-                var response = await httpResponseMessage.Content.ReadAsStringAsync();
-                AlertMessages.Process(response);
+                var response = await httpResponseMessage.EnsureGetStringAsync();
 
                 var startDateTime = DateTime.Now;
                 var sessionData = new Dictionary<string, string>();
@@ -115,12 +112,7 @@
                 var content = new FormUrlEncodedContent(sessionData);
                 cookieContainer.Add(this.baseAddress, new Cookie(SessionDataKeys.SessionId, sessionId));
                 var httpResponseMessage = await client.PostAsync("/EtecsaQueryServlet", content);
-
-                httpResponseMessage.EnsureSuccessStatusCode();
-
-                var response = await httpResponseMessage.Content.ReadAsStringAsync();
-                AlertMessages.Process(response);
-
+                var response = await httpResponseMessage.EnsureGetStringAsync();
                 var responseParts = response.Split(':');
                 for (var i = 0; i < responseParts.Length; i++)
                 {

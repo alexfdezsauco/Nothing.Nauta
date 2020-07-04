@@ -35,6 +35,12 @@
                     });
 
             var builder = new CommandLineBuilder(command);
+            builder.UseExceptionHandler(
+                (exception, context) =>
+                    {
+                        Log.Error(exception, "Error executing command '{command}'.", context.ParseResult.CommandResult.Token.Value);
+                    });
+
             builder.UseHelp();
             builder.UseVersionOption();
             builder.UseDebugDirective();
