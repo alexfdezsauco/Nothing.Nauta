@@ -43,39 +43,38 @@
             Processors.Add(
                 new RegexProcessor(
                     alertRegex,
-                    groupPredicate: group => group.Index == 1 && group.Value.Trim() == UserAlreadyConnected,
+                    groupPredicate: group => group.Value.Trim() == UserAlreadyConnected,
                     action: s => throw new InvalidOperationException("A session is already open")));
 
             Processors.Add(
                 new RegexProcessor(
                     alertRegex,
-                    groupPredicate: group => group.Index == 1 && group.Value.Trim() == AnormalAccountStatus,
+                    groupPredicate: group => group.Value.Trim() == AnormalAccountStatus,
                     action: s => throw new InvalidOperationException("Anormal account status")));
 
             Processors.Add(
                 new RegexProcessor(
                     alertRegex,
-                    groupPredicate: group => group.Index == 1 && group.Value.Trim() == UserOrPasswordIncorrect,
+                    groupPredicate: group => group.Value.Trim() == UserOrPasswordIncorrect,
                     action: s => throw new UnauthorizedAccessException("Incorrect username or password")));
 
             Processors.Add(
                 new RegexProcessor(
                     alertRegex,
-                    groupPredicate:
-                    group => group.Index == 1 && group.Value.Trim().StartsWith(UserCouldNotBeAuthorized),
+                    groupPredicate: group => group.Value.Trim().StartsWith(UserCouldNotBeAuthorized),
                     action: s => throw new UnauthorizedAccessException("User couldn't be authorized")));
 
             Processors.Add(
                 new RegexProcessor(
                     alertRegex,
-                    groupPredicate: group => group.Index == 1 && group.Value.Trim() == TimeAdjustmentRequired,
+                    groupPredicate: group => group.Value.Trim() == TimeAdjustmentRequired,
                     action: s => Log.Warning("Time adjustment is required.")));
 
             // This is the default processor.
             Processors.Add(
                 new RegexProcessor(
                     alertRegex,
-                    groupPredicate: group => group.Index == 1 && !string.IsNullOrWhiteSpace(group.Value.Trim()),
+                    groupPredicate: group => !string.IsNullOrWhiteSpace(group.Value.Trim()),
                     action: s => throw new InvalidOperationException(s)));
         }
 
