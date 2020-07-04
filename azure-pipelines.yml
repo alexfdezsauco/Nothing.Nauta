@@ -16,6 +16,6 @@ steps:
 - task: NuGetCommand@2
   inputs:
     command: 'push'
-    packagesToPush: 'output/**/*.nupkg'
+    packagesToPush: 'output/nuget/*.nupkg'
     nuGetFeedType: 'external'
     publishFeedCredentials: 'NuGet'
