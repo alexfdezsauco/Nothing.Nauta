@@ -1,4 +1,5 @@
 # Starter pipeline
+
 # Start with a minimal pipeline that you can customize to build and deploy your code.
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
@@ -12,3 +13,9 @@ pool:
 steps:
 - script: powershell -ExecutionPolicy ByPass -File .\build.ps1 -script .\build.cake -target "Build" -verbosity normal
   displayName: 'Build'
+- task: NuGetCommand@2
+  inputs:
+    command: 'push'
+    packagesToPush: 'output/**/*.nupkg'
+    nuGetFeedType: 'external'
+    publishFeedCredentials: 'NuGet'
