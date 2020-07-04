@@ -1,7 +1,9 @@
 {
   "profiles": {
     "Nothing.Nauta.Cmd": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "open",
+      "workingDirectory": "c:\\Users\\alexander.fernandez\\"
     }
   }
 }

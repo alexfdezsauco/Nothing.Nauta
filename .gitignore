@@ -346,3 +346,5 @@ healthchecksdb
 *.db
 *.db-shm
 *.db-wal
+
+tools
