@@ -16,20 +16,24 @@
     {
         private static Command CreateOpenCommand()
         {
-            var command = new Command("open", "Open Nauta session");
+            var command = new Command("open", "Open Nauta session")
+                              {
+                                  CommonArguments.CredentialsFile,
+                                  CommonArguments.SessionFile
+                              };
 
-            command.Handler = CommandHandler.Create(
-                async () =>
+            command.Handler = CommandHandler.Create<FileInfo, FileInfo>(
+                async (credentialsFile, sessionFile) =>
                     {
                         Log.Information("Opening Nauta session...");
 
                         Dictionary<string, string> sessionData = null;
-                        if (File.Exists("credentials.json"))
+                        if (File.Exists(credentialsFile.FullName))
                         {
                             Dictionary<string, string> credentials = null;
                             try
                             {
-                                var content = await File.ReadAllTextAsync("credentials.json");
+                                var content = await File.ReadAllTextAsync(credentialsFile.FullName);
                                 credentials = JsonSerializer.Deserialize<Dictionary<string, string>>(content);
                             }
                             catch (Exception e)
@@ -53,7 +57,7 @@
                                 if (sessionData != null)
                                 {
                                     await File.WriteAllTextAsync(
-                                        "session.json",
+                                        sessionFile.FullName,
                                         JsonSerializer.Serialize(
                                             sessionData,
                                             new JsonSerializerOptions { WriteIndented = true }));

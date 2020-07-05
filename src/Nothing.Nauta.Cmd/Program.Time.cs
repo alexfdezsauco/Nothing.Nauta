@@ -16,17 +16,20 @@
     {
         private static Command CreateTimeCommand()
         {
-            var command = new Command("time", "Display the remaining time from the open Nauta session");
+            var command = new Command("time", "Display the remaining time from the open Nauta session")
+                              {
+                                  CommonArguments.SessionFile
+                              };
 
-            command.Handler = CommandHandler.Create(
-                async () =>
+            command.Handler = CommandHandler.Create<FileInfo>(
+                async (sessionFile) =>
                     {
                         Log.Information("Querying remaining time from the Nauta session...");
 
                         Dictionary<string, string> sessionData = null;
                         try
                         {
-                            var sessionContent = await File.ReadAllTextAsync("session.json");
+                            var sessionContent = await File.ReadAllTextAsync(sessionFile.FullName);
                             sessionData = JsonSerializer.Deserialize<Dictionary<string, string>>(sessionContent);
                         }
                         catch (Exception e)

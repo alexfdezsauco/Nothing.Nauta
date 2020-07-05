@@ -13,7 +13,10 @@
     {
         private static Command CreateCredentialsCommand()
         {
-            var command = new Command("credentials", "Save Nauta credentials");
+            var command = new Command("credentials", "Save Nauta credentials")
+                              {
+                                  CommonArguments.CredentialsFile
+                              };
 
             command.AddOption(
                 new Option("--username", "-u") { Argument = new Argument<string>("username"), Required = true });
@@ -21,8 +24,8 @@
             command.AddOption(
                 new Option("--password", "-p") { Argument = new Argument<string>("password"), Required = true });
 
-            command.Handler = CommandHandler.Create<string, string>(
-                async (username, password) =>
+            command.Handler = CommandHandler.Create<string, string, FileInfo>(
+                async (username, password, credentialsFile) =>
                     {
                         Log.Information("Saving Nauta session credentials...");
 
@@ -34,7 +37,7 @@
                         try
                         {
                             await File.WriteAllTextAsync(
-                                "credentials.json",
+                                credentialsFile.FullName,
                                 JsonSerializer.Serialize(
                                     credentials,
                                     new JsonSerializerOptions { WriteIndented = true }));

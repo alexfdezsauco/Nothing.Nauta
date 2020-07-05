@@ -16,17 +16,17 @@
     {
         private static Command CreateCloseCommand()
         {
-            var command = new Command("close", "Close Nauta session");
+            var command = new Command("close", "Close Nauta session") { CommonArguments.SessionFile };
 
-            command.Handler = CommandHandler.Create(
-                async () =>
+            command.Handler = CommandHandler.Create<FileInfo>(
+                async (sessionFile) =>
                     {
                         Log.Information("Closing Nauta session...");
 
                         Dictionary<string, string> sessionData = null;
                         try
                         {
-                            var sessionContent = await File.ReadAllTextAsync("session.json");
+                            var sessionContent = await File.ReadAllTextAsync(sessionFile.FullName);
                             sessionData = JsonSerializer.Deserialize<Dictionary<string, string>>(sessionContent);
                         }
                         catch (Exception e)
@@ -57,7 +57,7 @@
 
                             try
                             {
-                                File.Delete("session.json");
+                                File.Delete(sessionFile.FullName);
                             }
                             catch (Exception e)
                             {
