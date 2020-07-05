@@ -18,7 +18,9 @@ namespace Nothing.Nauta.Cmd
             {
                 return new Argument<FileInfo>(r => GetCredentialFile(), true)
                            {
-                               Arity = ArgumentArity.Zero, Description = "The credentials file", Name = "credentialsFile"
+                               Arity = ArgumentArity.Zero,
+                               Description = "The credentials file",
+                               Name = "credentialsFile"
                            };
             }
         }

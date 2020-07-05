@@ -41,7 +41,7 @@
                                 retryAttempt => TimeSpan.FromSeconds(5),
                                 (exception, retry, timeSpan) =>
                                     {
-                                        Log.Error(exception, "Error closing Nauta session.");
+                                        Log.Error(exception, "Error closing Nauta session. Will retry in {TimeSpan}.", timeSpan);
                                     });
 
                             DateTime startDateTime = default;

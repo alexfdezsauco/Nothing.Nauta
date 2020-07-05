@@ -44,7 +44,7 @@
                                     retryAttempt => TimeSpan.FromSeconds(5),
                                     (exception, retry, timeSpan) =>
                                         {
-                                            Log.Error(exception, "Error query time in the Nauta session.");
+                                            Log.Error(exception, "Error query time in the Nauta session. Will retry in {TimeSpan}.", timeSpan);
                                         });
 
                             DateTime startDateTime = default;
