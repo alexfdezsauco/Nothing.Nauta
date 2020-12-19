@@ -13,19 +13,28 @@
     {
         private static Command CreateCredentialsCommand()
         {
-            var command = new Command("credentials", "Save Nauta credentials")
-                              {
-                                  CommonArguments.CredentialsFile
-                              };
+            var command = new Command("credentials", "Save Nauta credentials");
 
             command.AddOption(
-                new Option("--username", "-u") { Argument = new Argument<string>("username"), Required = true });
+                new Option(new[] { "--username", "-u" })
+                    {
+                        Argument = new Argument<string>("username"), IsRequired = true
+                    });
 
             command.AddOption(
-                new Option("--password", "-p") { Argument = new Argument<string>("password"), Required = true });
+                new Option(new[] { "--password", "-p" })
+                    {
+                        Argument = new Argument<string>("password"), IsRequired = true
+                    });
 
-            command.Handler = CommandHandler.Create<string, string, FileInfo>(
-                async (username, password, credentialsFile) =>
+            command.AddOption(
+                new Option(new[] { "--alias", "-a" })
+                    {
+                        Argument = new Argument<string>("alias"), IsRequired = false
+                    });
+
+            command.Handler = CommandHandler.Create<string, string, string>(
+                async (username, password, alias) =>
                     {
                         Log.Information("Saving Nauta session credentials...");
 
@@ -36,6 +45,7 @@
 
                         try
                         {
+                            var credentialsFile = FilesHelper.GetCredentialFile(alias);
                             await File.WriteAllTextAsync(
                                 credentialsFile.FullName,
                                 JsonSerializer.Serialize(

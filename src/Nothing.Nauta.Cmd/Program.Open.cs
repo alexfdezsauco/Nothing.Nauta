@@ -16,17 +16,20 @@
     {
         private static Command CreateOpenCommand()
         {
-            var command = new Command("open", "Open Nauta session")
-                              {
-                                  CommonArguments.CredentialsFile,
-                                  CommonArguments.SessionFile
-                              };
+            var command = new Command("open", "Open Nauta session");
+            command.AddOption(
+                new Option(new[] { "--alias", "-a" })
+                    {
+                        Argument = new Argument<string>("alias"){},
+                        IsRequired = false,
+                    });
 
-            command.Handler = CommandHandler.Create<FileInfo, FileInfo>(
-                async (credentialsFile, sessionFile) =>
+            command.Handler = CommandHandler.Create<string>(
+                async alias =>
                     {
                         Log.Information("Opening Nauta session...");
 
+                        var credentialsFile = FilesHelper.GetCredentialFile(alias);
                         Dictionary<string, string> sessionData = null;
                         if (File.Exists(credentialsFile.FullName))
                         {
@@ -56,6 +59,8 @@
 
                                 if (sessionData != null)
                                 {
+                                    var sessionFile = FilesHelper.GetSessionFile();
+
                                     await File.WriteAllTextAsync(
                                         sessionFile.FullName,
                                         JsonSerializer.Serialize(

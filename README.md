@@ -21,12 +21,22 @@ nauta-session is command line tool to manage ETECSA nauta sessions.
 To save credentials use the `credentials` command as follow:
 
     > nauta-session credentials --username %USERNAME% --password %PASSWORD%
+
+Actually, it is also possible save multiple credentials with alias: 
+
+    > nauta-session credentials --username %USERNAME% --password %PASSWORD% --alias %ALIAS%
+
     
 #### Open Nauta Session
 
 To open a nauta session use the `open` command as follow:
 
     > nauta-session open
+
+In order to open a session with credentials saved with an alias you could use a command as follow:
+
+    > nauta-session --alias %ALIAS%
+
 
 #### Query Remaining Time From Nauta Session
 

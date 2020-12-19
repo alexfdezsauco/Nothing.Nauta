@@ -16,11 +16,12 @@
     {
         private static Command CreateCloseCommand()
         {
-            var command = new Command("close", "Close Nauta session") { CommonArguments.SessionFile };
+            var command = new Command("close", "Close Nauta session");
 
-            command.Handler = CommandHandler.Create<FileInfo>(
-                async (sessionFile) =>
+            command.Handler = CommandHandler.Create(
+                async () =>
                     {
+                        var sessionFile = FilesHelper.GetSessionFile();
                         Log.Information("Closing Nauta session...");
 
                         Dictionary<string, string> sessionData = null;

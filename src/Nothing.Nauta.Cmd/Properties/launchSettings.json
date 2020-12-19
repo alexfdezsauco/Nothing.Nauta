@@ -2,7 +2,7 @@
   "profiles": {
     "Nothing.Nauta.Cmd": {
       "commandName": "Project",
-      "commandLineArgs": "open",
+      "commandLineArgs": "open --alias cu",
       "workingDirectory": "c:\\Users\\alexander.fernandez\\"
     }
   }

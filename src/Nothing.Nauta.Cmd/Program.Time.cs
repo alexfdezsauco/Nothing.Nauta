@@ -16,16 +16,12 @@
     {
         private static Command CreateTimeCommand()
         {
-            var command = new Command("time", "Display the remaining time from the open Nauta session")
-                              {
-                                  CommonArguments.SessionFile
-                              };
-
-            command.Handler = CommandHandler.Create<FileInfo>(
-                async (sessionFile) =>
+            var command = new Command("time", "Display the remaining time from the open Nauta session");
+            command.Handler = CommandHandler.Create(
+                async () =>
                     {
+                        var sessionFile = FilesHelper.GetSessionFile();
                         Log.Information("Querying remaining time from the Nauta session...");
-
                         Dictionary<string, string> sessionData = null;
                         try
                         {
