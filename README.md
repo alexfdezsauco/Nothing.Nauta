@@ -35,7 +35,7 @@ To open a nauta session use the `open` command as follow:
 
 In order to open a session with credentials saved with an alias you could use a command as follow:
 
-    > nauta-session --alias %ALIAS%
+    > nauta-session open --alias %ALIAS%
 
 
 #### Query Remaining Time From Nauta Session
