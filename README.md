@@ -1,6 +1,6 @@
 # Nothing.Nauta
 
-[![Build Status](https://dev.azure.com/alexfdezsauco/Nothing.Nauta/_apis/build/status/alexfdezsauco.Nothing.Nauta?branchName=develop)](https://dev.azure.com/alexfdezsauco/Nothing.Nauta/_build/latest?definitionId=1&branchName=develop)
+[![Build Status](https://dev.azure.com/alexfdezsauco/External%20Repositories%20Builds/_apis/build/status/alexfdezsauco.Nothing.Nauta?branchName=develop)](https://dev.azure.com/alexfdezsauco/External%20Repositories%20Builds/_build/latest?definitionId=17&branchName=develop)
 
 The ultimate dotnet API to manage ETECSA nauta sessions
 
