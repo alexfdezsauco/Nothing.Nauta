@@ -15,7 +15,7 @@ nauta-session is command line tool to manage ETECSA nauta sessions.
 1) Download the latest version from the [releases](https://github.com/alexfdezsauco/Nothing.Nauta/releases) page depending on your operating system.  
 2) Add the `nauta-session` executable file to your system path. 
 
-> If you select the `non-self-contained` releases you must install the [dotnet runtime](https://dotnet.microsoft.com/en-us/download/dotnet/6.0/runtime) first.
+> If you select a `non-self-contained` assets you must install the [dotnet runtime](https://dotnet.microsoft.com/en-us/download/dotnet/6.0/runtime) first.
 
 ### Usage
 
