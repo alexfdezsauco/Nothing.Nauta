@@ -177,6 +177,8 @@ Task("Publish")
   .IsDependentOn("Build")
   .Does(() => 
   {
+      EnsureDirectoryExists("./output/zip");
+
       for (var i = 0; i < ExecProjects.Length; i++)
       {
           var projectFile = ExecProjects[i];
@@ -191,7 +193,10 @@ Task("Publish")
                   Runtime = runtimeIdentifier,
                   Configuration = buildConfiguration,
                   OutputDirectory = string.Format(outputDirectoy, runtimeIdentifier, "non-self-contained")
-              });
+              });              
+
+              var nonSelfContainedFiles = GetFiles(string.Format(outputDirectoy, runtimeIdentifier, "non-self-contained") + "/**/*");
+              Zip(string.Format(outputDirectoy, runtimeIdentifier, "non-self-contained"), $"output/zip/{runtimeIdentifier}-non-self-contained-{NuGetVersionV2}.zip", nonSelfContainedFiles.Where(f => !f.FullPath.EndsWith(".pdb")));
 
               Information($"Publishing self-container executable for {projectFile} for runtime {runtimeIdentifier} ...");
               DotNetPublish(projectFile, new DotNetPublishSettings()
@@ -202,6 +207,9 @@ Task("Publish")
                   Configuration = buildConfiguration,
                   OutputDirectory = string.Format(outputDirectoy, runtimeIdentifier, "self-contained")
               });
+
+              var selfContainedFiles = GetFiles(string.Format(outputDirectoy, runtimeIdentifier, "self-contained") + "/**/*");
+              Zip(string.Format(outputDirectoy, runtimeIdentifier, "self-contained"), $"output/zip/{runtimeIdentifier}-self-contained-{NuGetVersionV2}.zip", selfContainedFiles.Where(f => !f.FullPath.EndsWith(".pdb")));
           }
       }
   });   
