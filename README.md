@@ -2,7 +2,7 @@
 
 [![Build Status](https://dev.azure.com/alexfdezsauco/Nothing.Nauta/_apis/build/status/alexfdezsauco.Nothing.Nauta?branchName=develop)](https://dev.azure.com/alexfdezsauco/Nothing.Nauta/_build/latest?definitionId=1&branchName=develop)
 
-The ultimate DotNet API to manage ETECSA Nauta sessions
+The ultimate dotnet API to manage ETECSA nauta sessions
 
 # Nothing.Nauta Example Applications
 
