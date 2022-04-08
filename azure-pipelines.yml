@@ -28,6 +28,9 @@ steps:
   env:
     NUGET_API_KEY: $(NUGET_API_KEY)
 
+- script: dotnet cake --target=Publish
+  displayName: 'Publish'
+
 - task: GitHubRelease@1
   inputs:
     gitHubConnection: 'alexfdezsauco (4)'
