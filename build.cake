@@ -89,7 +89,7 @@ Task("Restore")
   .Does(() => 
   {
       Information("Restoring Solution Packages");
-      DotNetCoreRestore(SolutionFileName, new DotNetCoreRestoreSettings()
+      DotNetRestore(SolutionFileName, new DotNetRestoreSettings()
       {
           Sources = new[] { nugetRepositoryProxy },
           NoCache = true
@@ -101,9 +101,9 @@ Task("Build")
   .IsDependentOn("Restore")
   .Does(() => 
   {
-      DotNetCoreBuild(
+      DotNetBuild(
                   SolutionFileName,
-                  new DotNetCoreBuildSettings()
+                  new DotNetBuildSettings()
                   {
                       Configuration = buildConfiguration,
                       ArgumentCustomization = args => args
@@ -118,7 +118,7 @@ Task("Test")
   {
     if (!string.IsNullOrWhiteSpace(TestProject))
     {
-      var settings = new DotNetCoreTestSettings
+      var settings = new DotNetTestSettings
         {
           NoWorkingDirectory = true,
           Configuration = buildConfiguration,
@@ -132,7 +132,7 @@ Task("Test")
       settings.Loggers.Add($"trx;LogFileName={GetTestResultFilePath()}");
       settings.Collectors.Add("XPlat Code Coverage");
 
-      DotNetCoreTest(TestProject, settings);	
+      DotNetTest(TestProject, settings);	
     }
   });
 
@@ -176,6 +176,33 @@ Task("Publish")
   .IsDependentOn("Build")
   .Does(() => 
   {
+      for (var i = 0; i < ExecProjects.Length; i++)
+      {
+          var projectFile = ExecProjects[i];
+          var outputDirectoy = ExecProjectsOutputDirectories[i];
+          foreach (var runtimeIdentifier in RuntimeIdentifiers)
+          {
+              Information($"Publishing executable for {projectFile} for runtime {runtimeIdentifier} ...");
+              DotNetPublish(projectFile, new DotNetPublishSettings()
+              {
+                  PublishSingleFile = true,
+                  SelfContained = false,
+                  Runtime = runtimeIdentifier,
+                  Configuration = buildConfiguration,
+                  OutputDirectory = string.Format(outputDirectoy, runtimeIdentifier, "non-self-contained")
+              });
+
+              Information($"Publishing self-container executable for {projectFile} for runtime {runtimeIdentifier} ...");
+              DotNetPublish(projectFile, new DotNetPublishSettings()
+              {
+                  PublishSingleFile = true,
+                  SelfContained = true,
+                  Runtime = runtimeIdentifier,
+                  Configuration = buildConfiguration,
+                  OutputDirectory = string.Format(outputDirectoy, runtimeIdentifier, "self-contained")
+              });
+          }
+      }
   });   
 
 Task("DockerBuild")
@@ -262,7 +289,7 @@ Task("NuGetPack")
     for (int i = 0; i < ComponentProjects.Length; i++)
     {
         var componentProject = ComponentProjects[i];
-        var settings = new DotNetCorePackSettings
+        var settings = new DotNetPackSettings
         {
             Configuration = buildConfiguration,
             OutputDirectory = packageOutputDirectory,
@@ -272,7 +299,7 @@ Task("NuGetPack")
                 .Append($"/p:Version={NuGetVersionV2}")
         };
 
-        DotNetCorePack(componentProject, settings);
+        DotNetPack(componentProject, settings);
     }
 
     EnsureDirectoryExists("./output/nuget-symbols");
@@ -294,7 +321,7 @@ Task("NuGetPush")
 	var nugetFiles  = GetFiles("./output/nuget/*.nupkg");
 	foreach(var nugetFile in nugetFiles)
         {
-		DotNetCoreNuGetPush(nugetFile.ToString(), new DotNetCoreNuGetPushSettings {
+		DotNetNuGetPush(nugetFile.ToString(), new DotNetNuGetPushSettings {
 		     Source = nugetRepository,
 		     ApiKey = nugetApiKey
 		});

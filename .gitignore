@@ -348,3 +348,4 @@ healthchecksdb
 *.db-wal
 
 tools
+output

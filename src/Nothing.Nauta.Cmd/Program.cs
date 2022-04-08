@@ -7,8 +7,6 @@
     using System.CommandLine.Parsing;
     using System.Threading.Tasks;
 
-    using Microsoft.Extensions.DependencyInjection;
-
     using Serilog;
 
     internal static partial class Program
@@ -17,8 +15,6 @@
         {
             Log.Logger = new LoggerConfiguration().MinimumLevel.Debug().WriteTo.Console().CreateLogger();
 
-            var serviceCollection = new ServiceCollection();
-
             var command = new RootCommand { Description = "Nauta command line tool." };
 
             command.AddCommand(CreateCredentialsCommand());
@@ -26,7 +22,7 @@
             command.AddCommand(CreateCloseCommand());
             command.AddCommand(CreateTimeCommand());
 
-            // Show commandline help unless a subcommand was used.
+            // Show commandline help unless a sub-command was used.
             command.Handler = CommandHandler.Create<IHelpBuilder>(
                 help =>
                     {
