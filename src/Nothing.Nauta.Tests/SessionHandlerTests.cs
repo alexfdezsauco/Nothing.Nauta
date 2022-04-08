@@ -12,10 +12,11 @@ namespace Nauta.Tests
     using Nothing.Nauta;
 
     [TestClass]
-    [TestCategory("Demo Usage")]
+    [TestCategory("Debug")]
     public class SessionHandlerTests
     {
         [TestMethod]
+        [TestCategory("Debug")]
         public async Task Login()
         {
             var session = new SessionHandler();
@@ -24,6 +25,7 @@ namespace Nauta.Tests
         }
 
         [TestMethod]
+        [TestCategory("Debug")]
         public async Task Logout()
         {
             var content = await File.ReadAllTextAsync("session.json");
@@ -33,6 +35,7 @@ namespace Nauta.Tests
         }
 
         [TestMethod]
+        [TestCategory("Debug")]
         public async Task Time()
         {
             var content = await File.ReadAllTextAsync("session.json");
