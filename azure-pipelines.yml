@@ -37,7 +37,7 @@ steps:
     tagSource: 'gitTag'
     tagPattern: '.*'
     title: 'Nauta Session CLI $(GitVersion.NuGetVersion)'
-    assets: 'output/release/nauta-session/*'
+    assets: '$(Build.SourcesDirectory)/output/release/nauta-session/*'
     isPreRelease: true
     changeLogCompareToRelease: 'lastFullRelease'
     changeLogType: 'commitBased'
