@@ -27,3 +27,16 @@ steps:
   displayName: 'NuGet Push'
   env:
     NUGET_API_KEY: $(NUGET_API_KEY)
+
+- task: GitHubRelease@1
+  inputs:
+    gitHubConnection: 'alexfdezsauco (4)'
+    repositoryName: 'alexfdezsauco/Nothing.Nauta'
+    action: 'create'
+    target: '$(Build.SourceVersion)'
+    tagSource: 'gitTag'
+    title: 'Nauta Session CLI $(GitVersion.NuGetVersion)'
+    assets: 'output/release/nauta-session/*'
+    isPreRelease: true
+    changeLogCompareToRelease: 'lastFullRelease'
+    changeLogType: 'commitBased'
