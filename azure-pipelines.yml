@@ -34,7 +34,7 @@ steps:
     repositoryName: 'alexfdezsauco/Nothing.Nauta'
     action: 'create'
     target: '$(Build.SourceVersion)'
-    tagSource: 'gitTag'
+    tag: '$(GitVersion.NuGetVersion)'
     title: 'Nauta Session CLI $(GitVersion.NuGetVersion)'
     assets: 'output/release/nauta-session/*'
     isPreRelease: true
