@@ -19,7 +19,7 @@
             var command = new Command("close", "Close Nauta session");
 
             command.Handler = CommandHandler.Create(
-                async () =>
+                 async () =>
                     {
                         var sessionFile = FilesHelper.GetSessionFile();
                         Log.Information("Closing Nauta session...");

@@ -8,16 +8,22 @@ trigger:
 - master
 - develop
 
-pool:
-  vmImage: 'windows-latest'
-
 steps:
-- script: powershell -ExecutionPolicy ByPass -File .\build.ps1 -script .\build.cake -target "Pack" -verbosity normal
-  displayName: 'Build'
+- script: dotnet tool restore
+  displayName: 'Restore Tools'
 
-- task: NuGetCommand@2
-  inputs:
-    command: 'push'
-    packagesToPush: './output/nuget/*.nupkg'
-    nuGetFeedType: 'external'
-    publishFeedCredentials: 'NuGet'
+- script: dotnet gitversion /output buildserver /nofetch
+  displayName: 'GitVersion'
+  
+- script: dotnet cake --target=Sonar
+  displayName: 'Sonar'
+  env:
+    SONAR_TOKEN: $(SONAR_TOKEN)
+
+- script: dotnet cake --target=NuGetPack
+  displayName: 'NuGet Pack'
+
+- script: dotnet cake --target=NuGetPush
+  displayName: 'NuGet Push'
+  env:
+    NUGET_API_KEY: $(NUGET_API_KEY)

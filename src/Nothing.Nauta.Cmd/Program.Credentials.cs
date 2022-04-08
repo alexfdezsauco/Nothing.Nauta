@@ -18,19 +18,22 @@
             command.AddOption(
                 new Option(new[] { "--username", "-u" })
                     {
-                        Argument = new Argument<string>("username"), IsRequired = true
+                        Argument = new Argument<string>("username"), 
+                        Required = true
                     });
 
             command.AddOption(
                 new Option(new[] { "--password", "-p" })
                     {
-                        Argument = new Argument<string>("password"), IsRequired = true
+                        Argument = new Argument<string>("password"), 
+                        Required = true
                     });
 
             command.AddOption(
                 new Option(new[] { "--alias", "-a" })
                     {
-                        Argument = new Argument<string>("alias"), IsRequired = false
+                        Argument = new Argument<string>("alias"), 
+                        Required = false, 
                     });
 
             command.Handler = CommandHandler.Create<string, string, string>(

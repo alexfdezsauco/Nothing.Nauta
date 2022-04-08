@@ -20,8 +20,8 @@
             command.AddOption(
                 new Option(new[] { "--alias", "-a" })
                     {
-                        Argument = new Argument<string>("alias"){},
-                        IsRequired = false,
+                        Argument = new Argument<string>("alias"),
+                        Required = false,
                     });
 
             command.Handler = CommandHandler.Create<string>(
