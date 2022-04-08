@@ -83,6 +83,7 @@ Task("UpdateVersion")
       }, out redirectedStandardOutput);
 
       NuGetVersionV2 = redirectedStandardOutput.FirstOrDefault(s => s.Contains("NuGetVersionV2")).Split(':')[1].Trim(',', ' ', '"');
+      Information($"CurrentVersion => {NuGetVersionV2}");
 });
 
 Task("Restore")
