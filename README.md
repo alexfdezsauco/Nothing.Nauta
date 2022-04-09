@@ -1,8 +1,19 @@
-# Nothing.Nauta
-
-[![Build Status](https://dev.azure.com/alexfdezsauco/External%20Repositories%20Builds/_apis/build/status/alexfdezsauco.Nothing.Nauta?branchName=develop)](https://dev.azure.com/alexfdezsauco/External%20Repositories%20Builds/_build/latest?definitionId=17&branchName=develop)
+Nothing.Nauta
+===============
 
 The ultimate dotnet API to manage ETECSA nauta sessions
+
+Build Status
+------------
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=stoneassemblies_Nothing.Nauta&metric=alert_status)](https://sonarcloud.io/dashboard?id=stoneassemblies_Nothing.Nauta)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=stoneassemblies_Nothing.Nauta&metric=ncloc)](https://sonarcloud.io/dashboard?id=stoneassemblies_Nothing.Nauta)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=stoneassemblies_Nothing.Nauta&metric=coverage)](https://sonarcloud.io/dashboard?id=stoneassemblies_Nothing.Nauta)
+
+Branch | Status
+------ | :------:
+master | [![Build Status](https://dev.azure.com/alexfdezsauco/External%20Repositories%20Builds/_apis/build/status/alexfdezsauco.Nothing.Nauta?branchName=master)](https://dev.azure.com/alexfdezsauco/External%20Repositories%20Builds/_build/latest?definitionId=17&branchName=master)
+develop | [![Build Status](https://dev.azure.com/alexfdezsauco/External%20Repositories%20Builds/_apis/build/status/alexfdezsauco.Nothing.Nauta?branchName=develop)](https://dev.azure.com/alexfdezsauco/External%20Repositories%20Builds/_build/latest?definitionId=17&branchName=develop)
+
 
 # Nothing.Nauta Example Applications
 
