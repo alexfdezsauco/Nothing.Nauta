@@ -19,7 +19,7 @@ develop | [![Build Status](https://dev.azure.com/alexfdezsauco/External%20Reposi
 
 ## Nauta Session CLI
 
-`nauta-session` is command line tool to manage ETECSA nauta sessions. 
+`nauta-session` is command line tool to manage ETECSA nauta sessions built on top `Nothing.Nauta`.
 
 ### Install 
 
