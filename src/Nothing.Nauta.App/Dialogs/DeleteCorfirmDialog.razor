@@ -1,0 +1,17 @@
+﻿@using Nothing.Nauta.App.Data
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Warning" Class="mr-3 mb-n1"/>
+            Account Information
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        Are you sure do you want to delete the account @AccountInfo.Username
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="Cancel" StartIcon="@Icons.Material.Filled.Cancel">Cancel</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Confirm" StartIcon="@Icons.Material.Filled.Delete">Ok</MudButton>
+    </DialogActions>
+</MudDialog>

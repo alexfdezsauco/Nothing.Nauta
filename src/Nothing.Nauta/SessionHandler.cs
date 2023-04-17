@@ -5,6 +5,7 @@
     using System.Globalization;
     using System.Net;
     using System.Net.Http;
+    using System.Net.Http.Headers;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
 
@@ -12,9 +13,9 @@
     using AngleSharp.Html.Dom;
 
     using Nothing.Nauta.Extensions;
-    using Nothing.Nauta.Helpers;
+    using Nothing.Nauta.Interfaces;
 
-    public class SessionHandler
+    public class SessionHandler : ISessionHandler
     {
         private readonly Uri baseAddress = new Uri("https://secure.etecsa.net:8443/");
 
@@ -107,11 +108,19 @@
 
             var cookieContainer = new CookieContainer();
             using (var handler = new HttpClientHandler { CookieContainer = cookieContainer })
-            using (var client = new HttpClient(handler) { BaseAddress = this.baseAddress })
+            using (var httpClient = new HttpClient(handler)
             {
+                BaseAddress = this.baseAddress
+            })
+            {
+                httpClient.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue
+                {
+                    NoCache = true
+                };
+
                 var content = new FormUrlEncodedContent(sessionData);
                 cookieContainer.Add(this.baseAddress, new Cookie(SessionDataKeys.SessionId, sessionId));
-                var httpResponseMessage = await client.PostAsync("/EtecsaQueryServlet", content);
+                var httpResponseMessage = await httpClient.PostAsync("/EtecsaQueryServlet", content);
                 var response = await httpResponseMessage.EnsureGetStringAsync();
                 var responseParts = response.Split(':');
                 for (var i = 0; i < responseParts.Length; i++)

@@ -1,0 +1,24 @@
+﻿@using Nothing.Nauta.App.Data
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.AccountCircle" Class="mr-3 mb-n1"/>
+            Account Information
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudForm Model="@AccountInfo" @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+            <MudTextField T="string" Label="Username" Required="true" RequiredError="User name is required!" @bind-Value="AccountInfo.Username"/>
+            <MudTextField T="string" Label="Password" InputType="InputType.Password" Required="true" RequiredError="Password is required!" @bind-Value="AccountInfo.Password"/>
+            <MudRadioGroup T="AccountType" Required="true" RequiredError="Account type is required!" @bind-SelectedOption="AccountInfo.AccountType">
+                <MudRadio Option="AccountType.National">National</MudRadio>
+                <MudRadio Option="AccountType.International">International</MudRadio>
+            </MudRadioGroup>
+        </MudForm>  
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="Cancel" StartIcon="@Icons.Material.Filled.Cancel">Cancel</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveAsync" StartIcon="@Icons.Material.Filled.Save">Save</MudButton>
+    </DialogActions>
+</MudDialog>
