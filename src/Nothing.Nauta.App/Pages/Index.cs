@@ -16,6 +16,7 @@
     using Nothing.Nauta.App.Services;
     using Nothing.Nauta.App.Services.Interfaces;
     using Nothing.Nauta.Interfaces;
+    using Polly;
 
     public partial class Index
     {
@@ -204,10 +205,14 @@
             return !context.IsConnected && this._accounts.Any(model => model.IsConnected);
         }
 
-        private async Task ClearAsync()
+        private async Task ManualResetAsync()
         {
-            this.SecureStorage.Remove(NautaSessionData);
-            await this.ReloadAsync();
+            var dialogReference = await this.DialogService!.ShowAsync<ManualResetCorfirmDialog>(string.Empty);
+            if (await dialogReference.GetReturnValueIfNotCancelledAsync<bool>())
+            {
+                this.SecureStorage.Remove(NautaSessionData);
+                await this.ReloadAsync();
+            }
         }
     }
 }
