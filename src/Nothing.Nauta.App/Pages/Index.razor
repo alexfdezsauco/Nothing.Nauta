@@ -1,11 +1,14 @@
 ﻿@page "/"
 
 <PageTitle>Index</PageTitle>
-
-<MudGrid Justify="Justify.SpaceBetween">
-    <MudItem><MudText Typo="Typo.h5" Color="Color.Primary" Style="margin-bottom: 20px">Accounts</MudText></MudItem>
-    <MudItem><MudIconButton Icon="@Icons.Material.Filled.Refresh" Color="Color.Primary" Size="Size.Large" OnClick="ReloadAsync" /></MudItem>
-    <MudItem><MudIconButton Icon="@Icons.Material.Filled.AddCircle" Color="Color.Primary" Size="Size.Large" OnClick="AddAccountAsync" /></MudItem>
+<MudGrid>
+    <MudItem xs="6">
+        <MudText Typo="Typo.h5" Color="Color.Primary" Style="margin-bottom: 20px">Accounts</MudText>
+    </MudItem>
+    <MudItem xs="6">
+        <MudIconButton Icon="@Icons.Material.Filled.Refresh" Color="Color.Primary" Size="Size.Large" OnClick="ReloadAsync" />
+        <MudIconButton Icon="@Icons.Material.Filled.AddCircle" Color="Color.Primary" Size="Size.Large" OnClick="AddAccountAsync" />
+    </MudItem>
 </MudGrid>
 
 @if (_accounts is not null && _accounts.Count > 0)
