@@ -7,16 +7,16 @@
 <MudLayout>
     <MudAppBar Elevation="0">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudText Align="Align.Center" Typo="Typo.h6">Nothing Nauta</MudText>
         <MudSpacer />
     </MudAppBar>
     <MudDrawer Elevation="1">
         <MudDrawerHeader>
-            <MudText Typo="Typo.h6">Nothing.Nauta.App</MudText>
         </MudDrawerHeader>
-        <NavMenu />
+        @* <NavMenu /> *@
     </MudDrawer>
     <MudMainContent>
-        <MudContainer MaxWidth="MaxWidth.Large" Class="my-4 pt-4">
+        <MudContainer MaxWidth="MaxWidth.Large" >
             @Body
         </MudContainer>
     </MudMainContent>

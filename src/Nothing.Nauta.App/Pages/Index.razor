@@ -1,40 +1,45 @@
 ﻿@page "/"
 
-<PageTitle>Index</PageTitle>
-<MudGrid>
-    <MudItem xs="6">
-        <MudText Typo="Typo.h5" Color="Color.Primary" Style="margin-bottom: 20px">Accounts</MudText>
-    </MudItem>
-    <MudItem xs="6">
-        <MudIconButton Icon="@Icons.Material.Filled.Refresh" Color="Color.Primary" Size="Size.Large" OnClick="ReloadAsync" />
-        <MudIconButton Icon="@Icons.Material.Filled.AddCircle" Color="Color.Primary" Size="Size.Large" OnClick="AddAccountAsync" />
-    </MudItem>
-</MudGrid>
+<PageTitle>Accounts</PageTitle>
 
-@if (_accounts is not null && _accounts.Count > 0)
+<MudToolBar Style="margin-left: -10px; margin-right: -15px" >
+    <MudIcon Icon="@Icons.Material.Filled.AccountCircle" Size="Size.Large" Color="Color.Primary"/>
+    <MudSpacer/>
+    <MudIconButton Icon="@Icons.Material.Filled.Add" Size="Size.Medium" OnClick="AddAccountAsync" Color="Color.Secondary" DisableElevation="true" />
+    <MudIconButton Icon="@Icons.Material.Filled.Refresh" Size="Size.Medium" OnClick="ReloadAsync" Color="Color.Tertiary" DisableElevation="true" />
+</MudToolBar>
+
+@if (_accounts.Count > 0)
 {
     <MudTable Items="@_accounts" Hover="true" LoadingProgressColor="Color.Info">
         <HeaderContent>
-            <MudTh>Username</MudTh>
+            <MudTh>User Name</MudTh>
             <MudTh>Account Type</MudTh>
             <MudTh>Remaining Time</MudTh>
-            <MudTh>Actions</MudTh>
+            <MudTh/>
         </HeaderContent>
         <RowTemplate>
-            <MudTd DataLabel="User name">@context.AccountInfo.Username</MudTd>
+            @*<AccountRow Conext="@context"></AccountRow>*@
+            <MudTd DataLabel="User Name">@context.AccountInfo.Username</MudTd>
             <MudTd DataLabel="Account Type">@context.AccountInfo.AccountType</MudTd>
             <MudTd DataLabel="Remaining Time">@context.RemainingTime</MudTd>
-            <MudTd DataLabel="Actions">
-                <MudSwitch T="bool" Size="Size.Large" Disabled="@IsDisable(context)" Checked="@context.IsConnected" Color="Color.Primary" CheckedChanged=@(async () => await CheckedChangedAsync(context))/>
-                <MudButton StartIcon="@Icons.Material.Filled.Edit" Color="Color.Primary" Size="Size.Large" OnClick=@(async () => await EditAsync(context))/>
-                <MudButton StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Large" OnClick=@(async () => await DeleteAsync(context))/>
+            <MudTd>
+                <MudSwitch T="bool" Size="Size.Medium" Disabled="@IsDisable(context)" Checked="@context.IsConnected" Color="Color.Primary" CheckedChanged=@(async () => await CheckedChangedAsync(context))>@(!context.IsConnected ? "Connect" : "Disconnect")</MudSwitch>
+                <MudButton StartIcon="@Icons.Material.Filled.Edit" Color="Color.Primary" Size="Size.Medium" OnClick=@(async () => await EditAsync(context))>Edit</MudButton>
+                <MudButton StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Medium" OnClick=@(async () => await DeleteAsync(context))>Delete</MudButton>
             </MudTd>
         </RowTemplate>
     </MudTable>
 
-    <MudButton StartIcon="@Icons.Material.Filled.ClearAll" Color="Color.Dark" Size="Size.Large" FullWidth="true" OnClick=@(async () => await ManualResetAsync())>Manual Reset</MudButton>
+    <br/>
+
+    <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.ClearAll" Color="Color.Error" Size="Size.Large" FullWidth="true" OnClick=@(async () => await ManualResetAsync())>Manual Reset</MudButton>
 }
 else
 {
-    <MudAlert Severity="Severity.Normal">Add a new account</MudAlert>
+    <MudAlert Severity="Severity.Info">Add a new account</MudAlert>
 }
+
+<MudOverlay Visible="_isOverlayVisible" DarkBackground="true">
+    <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
+</MudOverlay>

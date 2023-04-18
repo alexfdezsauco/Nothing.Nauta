@@ -3,12 +3,14 @@
 <MudDialog>
     <TitleContent>
         <MudText Typo="Typo.h6">
-            <MudIcon Icon="@Icons.Material.Filled.Warning" Class="mr-3 mb-n1"/>
+            <MudIcon Icon="@Icons.Material.Filled.Warning" Class="mr-3 mb-n1" Color="Color.Warning" />
             Account Information
         </MudText>
     </TitleContent>
     <DialogContent>
-        Are you sure do you want to delete the account @AccountInfo.Username
+        <MudText Typo="Typo.body1">
+            Are you sure do you want to delete the account @AccountInfo.Username
+        </MudText>
     </DialogContent>
     <DialogActions>
         <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="Cancel" StartIcon="@Icons.Material.Filled.Cancel">Cancel</MudButton>

@@ -12,11 +12,20 @@
 </head>
 
 <body>
+
 <div class="status-bar-safe-area">
 
 </div>
 
-<div id="app">Loading...</div>
+<div id="app">
+    <div style="position: absolute; top: 30vh; width: 100%; text-align: center">
+        <div class="mud-progress-circular mud-primary-text mud-progress-medium mud-progress-indeterminate" role="progressbar" aria-valuenow="0">
+            <svg class="mud-progress-circular-svg" viewBox="22 22 44 44">
+                <circle class="mud-progress-circular-circle mud-progress-indeterminate" cx="44" cy="44" r="20" fill="none" stroke-width="3"></circle>
+            </svg>
+        </div>
+    </div>
+</div>
 
 <div id="blazor-error-ui">
     An unhandled error has occurred.

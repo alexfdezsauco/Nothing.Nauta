@@ -3,12 +3,14 @@
 <MudDialog>
     <TitleContent>
         <MudText Typo="Typo.h6">
-            <MudIcon Icon="@Icons.Material.Filled.Warning" Class="mr-3 mb-n1"/>
+            <MudIcon Icon="@Icons.Material.Filled.Warning" Class="mr-3 mb-n1" Color="Color.Warning" />
             Manual Reset
         </MudText>
     </TitleContent>
     <DialogContent>
-        Are you sure do you want reset connection data? Remember also reset the router.
+        <MudText Typo="Typo.body1">
+            Are you sure do you want reset connection data? If true, remember also manually reset the router.
+        </MudText>
     </DialogContent>
     <DialogActions>
         <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="Cancel" StartIcon="@Icons.Material.Filled.Cancel">Cancel</MudButton>
