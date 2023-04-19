@@ -263,7 +263,7 @@
 
         private bool IsDeleteDisable(AccountViewModel context)
         {
-            return !context.IsConnected;
+            return context.IsConnected;
         }
 
         private bool IsManualResetDisable()
