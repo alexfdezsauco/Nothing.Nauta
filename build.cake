@@ -235,7 +235,7 @@ Task("Publish")
               DotNetPublish(projectFile, settings);    
 
               var files = GetFiles(settings.OutputDirectory + "/**/*");
-              Zip(settings.OutputDirectory, $"output/zip/nauta-session-app-{frameworkRuntimeIdentifier.Framework}-{frameworkRuntimeIdentifier.RuntimeIdentifier}-{NuGetVersionV2}.zip".Replace("--", "-"), files.Where(f => !f.FullPath.EndsWith(".aab") || !f.FullPath.EndsWith(".pdb"));
+              Zip(settings.OutputDirectory, $"output/zip/nauta-session-app-{frameworkRuntimeIdentifier.Framework}-{frameworkRuntimeIdentifier.RuntimeIdentifier}-{NuGetVersionV2}.zip".Replace("--", "-"), files.Where(f => !f.FullPath.EndsWith(".aab") || !f.FullPath.EndsWith(".pdb")));
           }
       }
   });   
