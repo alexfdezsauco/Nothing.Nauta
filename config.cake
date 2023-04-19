@@ -42,8 +42,8 @@ var MauiProjectsOutputDirectories  = new []
 var MauiFrameworkRuntimeIdentifiers  = new (string Framework, string RuntimeIdentifier) [] 
 {
     (Framework:"net6.0-android", RuntimeIdentifier:string.Empty),
-    (Framework:"net6.0-windows10.0.19041.0", RuntimeIdentifier:"win-x86"),
-    (Framework:"net6.0-windows10.0.19041.0", RuntimeIdentifier:"win-x64"),
+    (Framework:"net6.0-windows10.0.19041.0", RuntimeIdentifier:"win10-x64"),
+    (Framework:"net6.0-windows10.0.19041.0", RuntimeIdentifier:"win10-x86"),
     // "net6.0-ios",
     // "net6.0-maccatalyst"
 };
