@@ -44,33 +44,13 @@
 
         private void OnElapsed(object? sender, ElapsedEventArgs e)
         {
-            var accountViewModel = _accounts?.FirstOrDefault(model => model.IsConnected);
-            if (accountViewModel is null)
+            if (_accounts?.Any(model => model.IsConnected) ?? false)
             {
-                _timer.Enabled = false;
+                InvokeAsync(this.StateHasChanged);
             }
             else
             {
-                InvokeAsync(
-                    async () =>
-                        {
-                            var sessionData = await GetSessionDataAsync();
-                            if (sessionData is not null)
-                            {
-                                if (sessionData.TryGetValue(SessionDataKeys.Started, out var started)
-                                    && DateTime.TryParse(started, out var startDateTime))
-                                {
-                                    var remainingTime = await this.SessionHandler!.RemainingTimeAsync(sessionData);
-                                    accountViewModel.RemainingTime = remainingTime.Subtract(DateTime.Now.Subtract(startDateTime));
-                                }
-                                else
-                                {
-                                    accountViewModel.RemainingTime = await SessionHandler!.RemainingTimeAsync(sessionData);
-                                }
-                            }
-
-                            StateHasChanged();
-                        });
+                _timer.Enabled = false;
             }
         }
 

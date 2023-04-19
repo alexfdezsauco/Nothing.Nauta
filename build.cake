@@ -196,7 +196,7 @@ Task("Publish")
               });              
 
               var nonSelfContainedFiles = GetFiles(string.Format(outputDirectoy, runtimeIdentifier, "non-self-contained") + "/**/*");
-              Zip(string.Format(outputDirectoy, runtimeIdentifier, "non-self-contained"), $"output/zip/{runtimeIdentifier}-non-self-contained-{NuGetVersionV2}.zip", nonSelfContainedFiles.Where(f => !f.FullPath.EndsWith(".pdb")));
+              Zip(string.Format(outputDirectoy, runtimeIdentifier, "non-self-contained"), $"output/zip/nauta-session-cli-{runtimeIdentifier}-non-self-contained-{NuGetVersionV2}.zip", nonSelfContainedFiles.Where(f => !f.FullPath.EndsWith(".pdb")));
 
               Information($"Publishing self-container executable for {projectFile} for runtime {runtimeIdentifier} ...");
               DotNetPublish(projectFile, new DotNetPublishSettings()
@@ -209,7 +209,33 @@ Task("Publish")
               });
 
               var selfContainedFiles = GetFiles(string.Format(outputDirectoy, runtimeIdentifier, "self-contained") + "/**/*");
-              Zip(string.Format(outputDirectoy, runtimeIdentifier, "self-contained"), $"output/zip/{runtimeIdentifier}-self-contained-{NuGetVersionV2}.zip", selfContainedFiles.Where(f => !f.FullPath.EndsWith(".pdb")));
+              Zip(string.Format(outputDirectoy, runtimeIdentifier, "self-contained"), $"output/zip/nauta-session-cli-{runtimeIdentifier}-self-contained-{NuGetVersionV2}.zip", selfContainedFiles.Where(f => !f.FullPath.EndsWith(".pdb")));
+          }
+      }
+
+      for (var i = 0; i < MauiProjects.Length; i++)
+      {
+          var projectFile = MauiProjects[i];
+          var outputDirectoy = MauiProjectsOutputDirectories[i];
+          foreach (var frameworkRuntimeIdentifier in MauiFrameworkRuntimeIdentifiers)
+          {
+              Information($"Publishing app for {projectFile} for target framework {frameworkRuntimeIdentifier.Framework} {frameworkRuntimeIdentifier.RuntimeIdentifier} ...");
+              var settings = new DotNetPublishSettings()
+              {
+                  Configuration = buildConfiguration,
+                  OutputDirectory = string.Format(outputDirectoy, frameworkRuntimeIdentifier.Framework) + $"/{frameworkRuntimeIdentifier.RuntimeIdentifier}".TrimEnd('/'),
+                  Framework = frameworkRuntimeIdentifier.Framework
+              };
+
+              if (!string.IsNullOrWhiteSpace(frameworkRuntimeIdentifier.RuntimeIdentifier))
+              {
+                  settings.Runtime = frameworkRuntimeIdentifier.RuntimeIdentifier;
+              }
+
+              DotNetPublish(projectFile, settings);    
+
+              var files = GetFiles(settings.OutputDirectory + "/**/*");
+              Zip(settings.OutputDirectory, $"output/zip/nauta-session-app-{frameworkRuntimeIdentifier.Framework}-{frameworkRuntimeIdentifier.RuntimeIdentifier}-{NuGetVersionV2}.zip".Replace("--", "-"), files.Where(f => !f.FullPath.EndsWith(".aab") || !f.FullPath.EndsWith(".pdb"));
           }
       }
   });   
