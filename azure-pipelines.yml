@@ -60,7 +60,7 @@ steps:
     target: '$(Build.SourceVersion)'
     tagSource: 'gitTag'
     tagPattern: '.*'
-    title: 'Nauta Session CLI $(GitVersion.NuGetVersion)'
+    title: 'Nauta Session $(GitVersion.NuGetVersion)'
     assets: '$(Build.SourcesDirectory)/output/zip/*.zip'
     isPreRelease: true
     changeLogCompareToRelease: 'lastFullRelease'
