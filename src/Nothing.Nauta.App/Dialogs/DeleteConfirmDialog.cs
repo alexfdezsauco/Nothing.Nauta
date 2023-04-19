@@ -6,9 +6,8 @@
     using MudBlazor;
 
     using Nothing.Nauta.App.Data;
-    using Nothing.Nauta.App.Services.Interfaces;
 
-    public partial class DeleteCorfirmDialog
+    public partial class DeleteConfirmDialog
     {
         [Parameter]
         public AccountInfo? AccountInfo { get; set; }

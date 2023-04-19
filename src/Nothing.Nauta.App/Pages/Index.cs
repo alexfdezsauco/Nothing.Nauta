@@ -21,7 +21,7 @@
     {
         private const string  NautaSessionData = "NautaSessionData";
 
-        private readonly List<AccountViewModel> _accounts = new List<AccountViewModel>();
+        private List<AccountViewModel>? _accounts;
 
         private Timer _timer = new Timer(1000);
         
@@ -44,7 +44,7 @@
 
         private void OnElapsed(object? sender, ElapsedEventArgs e)
         {
-            var accountViewModel = _accounts.FirstOrDefault(model => model.IsConnected);
+            var accountViewModel = _accounts?.FirstOrDefault(model => model.IsConnected);
             if (accountViewModel is null)
             {
                 _timer.Enabled = false;
@@ -55,13 +55,26 @@
                     async () =>
                         {
                             var sessionData = await GetSessionDataAsync();
-                            accountViewModel.RemainingTime = await SessionHandler!.RemainingTimeAsync(sessionData);
+                            if (sessionData is not null)
+                            {
+                                if (sessionData.TryGetValue(SessionDataKeys.Started, out var started)
+                                    && DateTime.TryParse(started, out var startDateTime))
+                                {
+                                    var remainingTime = await this.SessionHandler!.RemainingTimeAsync(sessionData);
+                                    accountViewModel.RemainingTime = remainingTime.Subtract(DateTime.Now.Subtract(startDateTime));
+                                }
+                                else
+                                {
+                                    accountViewModel.RemainingTime = await SessionHandler!.RemainingTimeAsync(sessionData);
+                                }
+                            }
+
                             StateHasChanged();
                         });
             }
         }
 
-        protected Task BackgroundRunAsync(Func<Task> task, Func<Task>? onFinishTask = null)
+        protected Task BackgroundRunAsync(Func<Task> task, Func<Task>? onFinishTask = null, Func<Task>? onErrorTask = null)
         {
             _isOverlayVisible = true;
 
@@ -86,7 +99,11 @@
                                         StateHasChanged();
                                         if (exception is not null)
                                         {
-                                            Snackbar!.Add(exception.Message);
+                                            Snackbar!.Add(exception.Message, Severity.Error);
+                                            if (onErrorTask is not null)
+                                            {
+                                                await onErrorTask();
+                                            }
                                         }
 
                                         if (onFinishTask is not null)
@@ -112,21 +129,22 @@
 
             var sessionData = await GetSessionDataAsync();
             
-            string? currentSessionUserName = null;
-            sessionData?.TryGetValue(SessionDataKeys.UserName, out currentSessionUserName);
-
-            _accounts.Clear();
+            var accounts = new List<AccountViewModel>();
             foreach (var accountInfo in await AccountManagement!.ListAsync())
             {
-                var isConnected = accountInfo.GetUserName() == currentSessionUserName;
-                var accountViewModel = new AccountViewModel(accountInfo, isConnected);
-                if (isConnected)
+                var accountViewModel = new AccountViewModel(accountInfo, sessionData);
+                if (accountViewModel.IsConnected)
                 {
+                    accountViewModel .RemainingTime = await this.SessionHandler!.RemainingTimeAsync(sessionData);
                     _timer.Enabled = true;
                 }
 
-                _accounts.Add(accountViewModel);
+                accounts.Add(accountViewModel);
             }
+
+            _accounts ??= new List<AccountViewModel>();
+            _accounts.Clear();
+            _accounts.AddRange(accounts);
 
             StateHasChanged();
         }
@@ -168,10 +186,10 @@
         {
             var dialogParameters = new DialogParameters
                                        {
-                                           { nameof(DeleteCorfirmDialog.AccountInfo), context.AccountInfo }
+                                           { nameof(DeleteConfirmDialog.AccountInfo), context.AccountInfo }
                                        };
 
-            var dialogReference = await DialogService!.ShowAsync<DeleteCorfirmDialog>(string.Empty, dialogParameters);
+            var dialogReference = await DialogService!.ShowAsync<DeleteConfirmDialog>(string.Empty, dialogParameters);
             if (await dialogReference.GetReturnValueIfNotCancelledAsync<bool>())
             {
                 await AccountManagement!.RemoveAsync(context.AccountInfo);
@@ -184,7 +202,7 @@
             var accountInfo = new AccountInfo();
             var dialogParameters = new DialogParameters
                                        {
-                                           { nameof(DeleteCorfirmDialog.AccountInfo), accountInfo }
+                                           { nameof(DeleteConfirmDialog.AccountInfo), accountInfo }
                                        };
 
             var dialogReference = await DialogService!.ShowAsync<AddOrEditAccountDialog>(string.Empty, dialogParameters);
@@ -203,22 +221,15 @@
             }
             else
             {
-                await BackgroundRunAsync(CloseAsync, ReloadAsync);
+                await BackgroundRunAsync(CloseAsync, ReloadAsync, ForceConnectionCloseAsync);
             }
         }
 
         private async Task CloseAsync()
         {
-            try
-            {
-                var sessionData = await GetSessionDataAsync();
-                await SessionHandler!.CloseAsync(sessionData);
-                SecureStorage!.Remove(NautaSessionData);
-            }
-            catch (Exception ex)
-            {
-                Snackbar!.Add(ex.Message, Severity.Error);
-            }
+            var sessionData = await GetSessionDataAsync();
+            await SessionHandler!.CloseAsync(sessionData);
+            SecureStorage!.Remove(NautaSessionData);
         }
 
         private async Task OpenAsync(AccountViewModel context)
@@ -230,14 +241,9 @@
             }
         }
 
-        private bool IsDisable(AccountViewModel context)
+        private async Task ForceConnectionCloseAsync()
         {
-            return !context.IsConnected && _accounts.Any(model => model.IsConnected);
-        }
-
-        private async Task ManualResetAsync()
-        {
-            var dialogReference = await DialogService!.ShowAsync<ManualResetCorfirmDialog>(string.Empty);
+            var dialogReference = await DialogService!.ShowAsync<ForceConnectionCloseConfirmDialog>(string.Empty);
             if (await dialogReference.GetReturnValueIfNotCancelledAsync<bool>())
             {
                 SecureStorage!.Remove(NautaSessionData);
@@ -245,9 +251,29 @@
             }
         }
 
-        private bool AnyAccount()
+        private bool IsSwitchDisable(AccountViewModel context)
         {
-            return _accounts is not null && _accounts.Count > 0;
+            return !context.IsConnected && this.IsConnected();
+        }
+        
+        private bool IsEditDisable(AccountViewModel context)
+        {
+            return context.IsConnected;
+        }
+
+        private bool IsDeleteDisable(AccountViewModel context)
+        {
+            return !context.IsConnected;
+        }
+
+        private bool IsManualResetDisable()
+        {
+            return this.IsConnected();
+        }
+
+        private bool IsConnected()
+        {
+            return _accounts is null || _accounts.Any(model => model.IsConnected);
         }
     }
 }

@@ -5,7 +5,7 @@
 
     using MudBlazor;
 
-    public partial class ManualResetCorfirmDialog
+    public partial class ForceConnectionCloseConfirmDialog
     {
         [CascadingParameter]
         private MudDialogInstance? MudDialog { get; set; }
