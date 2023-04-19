@@ -229,7 +229,7 @@ Task("Publish")
 
               if (!string.IsNullOrWhiteSpace(frameworkRuntimeIdentifier.RuntimeIdentifier))
               {
-                  settings.Runtime = frameworkRuntimeIdentifier.RuntimeIdentifier;
+                  settings.ArgumentCustomization = args => args.Append($"-p:RuntimeIdentifierOverride={frameworkRuntimeIdentifier.RuntimeIdentifier}");                
               }
 
               DotNetPublish(projectFile, settings);    
