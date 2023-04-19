@@ -14,6 +14,13 @@ Branch | Status
 master | [![Build Status](https://dev.azure.com/alexfdezsauco/External%20Repositories%20Builds/_apis/build/status/alexfdezsauco.Nothing.Nauta?branchName=master)](https://dev.azure.com/alexfdezsauco/External%20Repositories%20Builds/_build/latest?definitionId=17&branchName=master)
 develop | [![Build Status](https://dev.azure.com/alexfdezsauco/External%20Repositories%20Builds/_apis/build/status/alexfdezsauco.Nothing.Nauta?branchName=develop)](https://dev.azure.com/alexfdezsauco/External%20Repositories%20Builds/_build/latest?definitionId=17&branchName=develop)
 
+# Contributions
+
+This is an open-source project, so your contributions are welcome. You can get in touch by:
+
+- Creating tickets.
+- Contributing by pull requests.
+- or just [buying me a coffee](https://qvapay.com/payme/alexander.fernandez.sauco) :wink:
 
 # Nothing.Nauta Example Applications
 
@@ -24,6 +31,7 @@ develop | [![Build Status](https://dev.azure.com/alexfdezsauco/External%20Reposi
 ### Install 
 
 1) Download the latest version from the [releases](https://github.com/alexfdezsauco/Nothing.Nauta/releases) page depending on your operating system.  
+
 2) Add the `nauta-session` executable file to your system path. 
 
 > If you select a `non-self-contained` assets you must install the [dotnet runtime](https://dotnet.microsoft.com/en-us/download/dotnet/6.0/runtime) first.
@@ -67,3 +75,16 @@ To query remaining time from the nauta session use the `time` command as follow:
 To close a nauta session use the `close` command as follow:
 
     > nauta-session close
+
+
+## Nauta Session App
+
+`nauta-session-app` is an application to manage ETECSA nauta sessions built on top `Nothing.Nauta`.
+
+![Nauta Session](media/nauta-session-app-connected.png)
+
+### Install
+
+1) Download the latest version from the [releases](https://github.com/alexfdezsauco/Nothing.Nauta/releases) page depending on your operating system. 
+
+> The app is not ready to be published in official stores like [Google Play Store](https://play.google.com/), [Apple Store](https://www.apple.com/store), but it will be available soon.

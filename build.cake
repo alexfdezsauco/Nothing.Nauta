@@ -229,8 +229,10 @@ Task("Publish")
 
               if (!string.IsNullOrWhiteSpace(frameworkRuntimeIdentifier.RuntimeIdentifier))
               {
-                  settings.ArgumentCustomization = args => args.Append($"-p:RuntimeIdentifierOverride={frameworkRuntimeIdentifier.RuntimeIdentifier}");                
+                  settings.Runtime = frameworkRuntimeIdentifier.RuntimeIdentifier;
               }
+
+              settings.ArgumentCustomization = args => args.Append($"/p:PackageLocation={settings.OutputDirectory}");                
 
               DotNetPublish(projectFile, settings);    
 
