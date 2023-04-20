@@ -18,6 +18,12 @@ steps:
     packageType: 'sdk'
     version: '6.0.x'
 
+- task: JavaToolInstaller@0
+  inputs:
+    versionSpec: '11'
+    jdkArchitectureOption: 'x64'
+    jdkSourceOption: 'PreInstalled'
+
 - task: Bash@3
   displayName: Install MAUI
   inputs:
