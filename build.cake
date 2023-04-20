@@ -232,7 +232,7 @@ Task("Publish")
                   settings.Runtime = frameworkRuntimeIdentifier.RuntimeIdentifier;
               }
 
-              settings.ArgumentCustomization = args => args.Append($"/p:PackageLocation={settings.OutputDirectory}");                
+              settings.ArgumentCustomization = args => args.Append($"-p:PackageOutputPath={settings.OutputDirectory}/package");                
 
               DotNetPublish(projectFile, settings);    
 
