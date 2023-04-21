@@ -19,7 +19,6 @@ public class IndexViewModel : ViewModelBase
     private readonly ISessionManager _sessionManager;
     private readonly IViewModelFactory _viewModelFactory;
 
-
     public IndexViewModel(IAccountManagement accountManagement, ISessionManager sessionManager, IViewModelFactory viewModelFactory)
     {
         _accountManagement = accountManagement;

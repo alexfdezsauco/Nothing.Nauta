@@ -1,6 +1,9 @@
 ﻿namespace Nothing.Nauta.App.Components;
 
+using AndroidX.Lifecycle;
+
 using Microsoft.AspNetCore.Components;
+using Nothing.Nauta.App.Components.Extensions;
 using Nothing.Nauta.App.Services.Interfaces;
 using Nothing.Nauta.App.ViewModels;
 
@@ -19,6 +22,8 @@ public class ComponentBase<TViewModel> : ComponentBase where TViewModel : IViewM
         }
 
         ViewModel = ViewModelFactory.Create<TViewModel>();
+        this.MapViewToViewModelProperties();
+
         ViewModel.PropertyChanged += (sender, args) =>
             {
                 InvokeAsync(StateHasChanged);

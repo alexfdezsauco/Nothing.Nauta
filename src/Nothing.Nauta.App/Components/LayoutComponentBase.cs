@@ -1,6 +1,7 @@
 ﻿namespace Nothing.Nauta.App.Components;
 
 using Microsoft.AspNetCore.Components;
+using Nothing.Nauta.App.Components.Extensions;
 using Nothing.Nauta.App.Services.Interfaces;
 using Nothing.Nauta.App.ViewModels;
 
@@ -19,6 +20,7 @@ public class LayoutComponentBase<TViewModel> : LayoutComponentBase where TViewMo
         }
 
         ViewModel = ViewModelFactory.Create<TViewModel>();
+        this.MapViewToViewModelProperties();
         ViewModel.PropertyChanged += (sender, args) =>
             {
                 InvokeAsync(this.StateHasChanged);
