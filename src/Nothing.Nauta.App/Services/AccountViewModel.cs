@@ -88,7 +88,7 @@ public class AccountViewModel : ViewModelBase, IDisposable
 
     public void Dispose()
     {
-        _sessionManager.StateChanged += this.OnSessionManagerStateChanged;
+        _sessionManager.StateChanged -= this.OnSessionManagerStateChanged;
         _timer.Enabled = false;
         _timer.Dispose();
     }
