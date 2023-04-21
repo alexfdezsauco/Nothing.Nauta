@@ -4,13 +4,14 @@
     using System.Runtime.CompilerServices;
 
     using Blorc.Data;
-    using Blorc.MVVM;
 
     using Nothing.Nauta.App.Annotations;
 
     public interface IViewModel : Blorc.MVVM.IViewModel
     {
         Task InitializeAsync();
+
+        Func<Action, Task> InvokeAsync { get; set; }
     }
 
     public class ViewModelBase : IViewModel
@@ -23,6 +24,9 @@
         {
             return Task.CompletedTask;
         }
+
+        // TODO: Create a dispatcher service for this.
+        public Func<Action, Task> InvokeAsync { get; set; }
 
         public ViewModelBase()
         {

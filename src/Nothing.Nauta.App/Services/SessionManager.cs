@@ -7,7 +7,8 @@ using System.Text.Json;
 
 using Nothing.Nauta.Interfaces;
 
-public class SessionManager : ISessionManager
+public class 
+    SessionManager : ISessionManager
 {
     private const string NautaSessionData = "NautaSessionData";
 
@@ -47,9 +48,9 @@ public class SessionManager : ISessionManager
             return TimeSpan.Zero;
         }
 
-        return await _sessionHandler.RemainingTimeAsync(sessionData);
+        var remainingTime = await _sessionHandler.RemainingTimeAsync(sessionData);
 
-        // return remainingTime.Subtract(DateTime.Now.Subtract(startDateTime));
+        return remainingTime.Subtract(DateTime.Now.Subtract(startDateTime));
     }
 
     public async Task OpenAsync(string userName, string? password)
@@ -76,6 +77,17 @@ public class SessionManager : ISessionManager
         OnStateChanged(new SessionManagerStateChangeEventArg(false));
         
         return Task.CompletedTask;
+    }
+
+    public async Task<bool> IsConnectedAsync()
+    {
+        var sessionData = await GetSessionDataAsync();
+        if (sessionData?.TryGetValue(SessionDataKeys.UserName, out var currentSessionUserName) ?? false)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     public async Task<bool> IsConnectedAsync(AccountInfo accountInfo)

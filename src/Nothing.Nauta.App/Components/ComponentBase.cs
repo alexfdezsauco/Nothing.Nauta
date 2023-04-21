@@ -24,6 +24,8 @@ public class ComponentBase<TViewModel> : ComponentBase where TViewModel : IViewM
                 InvokeAsync(StateHasChanged);
             };
 
+        ViewModel.InvokeAsync = InvokeAsync;
+
         await ViewModel.InitializeAsync();
     }
 }

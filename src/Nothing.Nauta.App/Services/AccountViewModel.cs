@@ -17,24 +17,19 @@ public class AccountViewModel : ViewModelBase, IDisposable
     {
         AccountInfo = accountInfo;
         _sessionManager = sessionManager;
-        _timer.Elapsed += OnElapsed;
-    }
 
-    private void OnElapsed(object? sender, ElapsedEventArgs e)
-    {
-        Task.Run(
-            async () =>
+        _timer.Elapsed += async (sender, args) =>
+            {
+                IsConnected = await _sessionManager.IsConnectedAsync(AccountInfo);
+                if (!IsConnected)
                 {
-                    IsConnected = await _sessionManager.IsConnectedAsync(AccountInfo);
-                    if (!IsConnected)
-                    {
-                        _timer.Enabled = false;
-                    }
-                    else
-                    {
-                        RemainingTime = await _sessionManager.GetRemainingTimeAsync();
-                    }
-                });
+                    _timer.Enabled = false;
+                }
+                else
+                {
+                    RemainingTime = await _sessionManager.GetRemainingTimeAsync();
+                }
+            };
     }
 
     public override async Task InitializeAsync()
@@ -65,27 +60,7 @@ public class AccountViewModel : ViewModelBase, IDisposable
 
     public void Dispose()
     {
-        this._timer.Elapsed -= OnElapsed;
-        if (this._timer.Enabled)
-        {
-            this._timer.Enabled = false;
-        }
-
+        this._timer.Enabled = false;
         this._timer.Dispose();
-    }
-
-    public bool IsSwitchDisable()
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool IsEditDisable()
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool IsDeleteDisable()
-    {
-        throw new NotImplementedException();
     }
 }

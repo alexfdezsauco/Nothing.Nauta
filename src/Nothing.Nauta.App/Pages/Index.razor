@@ -14,12 +14,12 @@
 <MudToolBar Style="margin-left: -10px; margin-right: -15px" >
     @if (ViewModel.IsConnected)
     {
-        <MudIcon Color="Color.Success" Icon="@Icons.Material.Filled.SignalWifi4Bar" Class="mr-5" />
+@*        <MudIcon Color="Color.Success" Icon="@Icons.Material.Filled.SignalWifi4Bar" Class="mr-5" />*@
         <MudText Typo="Typo.body1">CONNECTED</MudText>
     }
     else
     {
-        <MudIcon Color="Color.Error" Icon="@Icons.Material.Filled.SignalWifiStatusbarConnectedNoInternet4" Class="mr-5" />
+@*        <MudIcon Color="Color.Error" Icon="@Icons.Material.Filled.SignalWifiStatusbarConnectedNoInternet4" Class="mr-5" />*@
         <MudText Typo="Typo.body1">DISCONNECTED</MudText>
     }
 
@@ -28,11 +28,11 @@
     <MudIconButton Icon="@Icons.Material.Filled.Refresh" Size="Size.Medium" OnClick="ViewModel.ReloadAsync" Color="Color.Tertiary" DisableElevation="true" />
 </MudToolBar>
 
-@if (ViewModel.Accounts is null)
+@if (ViewModel.IsReloading)
 {
     <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large" />
 }
-else if (ViewModel.Accounts.Count > 0)
+else if (ViewModel.Accounts?.Count > 0)
 {
     <MudTable Items="@ViewModel.Accounts" Hover="true" LoadingProgressColor="Color.Info">
         <HeaderContent>

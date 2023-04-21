@@ -17,6 +17,8 @@ public interface ISessionManager
     Task CloseAsync();
 
     Task ForceCloseAsync();
+
+    Task<bool> IsConnectedAsync();
 }
 
 public class SessionManagerStateChangeEventArg

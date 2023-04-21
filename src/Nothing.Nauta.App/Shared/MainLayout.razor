@@ -1,5 +1,10 @@
 ﻿@inherits Nothing.Nauta.App.Components.LayoutComponentBase<Nothing.Nauta.App.ViewModels.Shared.MainLayoutViewModel>
 
+@if (ViewModel is null)
+{
+    return;
+}
+
 <MudThemeProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />

@@ -4,12 +4,17 @@ namespace Nothing.Nauta.App.ViewModels.Shared
 {
     public class MainLayoutViewModel : ViewModelBase
     {
-        private readonly ISessionManager sessionManager;
+        private readonly ISessionManager _sessionManager;
 
         public MainLayoutViewModel(ISessionManager sessionManager)
         {
-            this.sessionManager = sessionManager;
-            this.sessionManager.StateChanged += OnSessionManagerStateChanged;
+            _sessionManager = sessionManager;
+        }
+
+        public override async Task InitializeAsync()
+        {
+            _sessionManager.StateChanged += OnSessionManagerStateChanged;
+            IsConnected = await _sessionManager.IsConnectedAsync();
         }
 
         private void OnSessionManagerStateChanged(object? sender, SessionManagerStateChangeEventArg e)
@@ -19,8 +24,8 @@ namespace Nothing.Nauta.App.ViewModels.Shared
 
         public bool IsDrawerOpen
         {
-            get => GetPropertyValue<bool>(nameof(this.IsDrawerOpen));
-            set => SetPropertyValue(nameof(this.IsDrawerOpen), value);
+            get => GetPropertyValue<bool>(nameof(IsDrawerOpen));
+            set => SetPropertyValue(nameof(IsDrawerOpen), value);
         }
 
         public bool IsConnected
@@ -31,7 +36,7 @@ namespace Nothing.Nauta.App.ViewModels.Shared
 
         public void DrawerToggle()
         {
-            this.IsDrawerOpen = !this.IsDrawerOpen;
+            IsDrawerOpen = !IsDrawerOpen;
         }
     }
 }
