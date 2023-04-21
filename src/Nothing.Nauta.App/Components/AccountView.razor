@@ -1,0 +1,16 @@
+﻿@inherits ComponentBase<Nothing.Nauta.App.Services.AccountViewModel>
+
+@if (ViewModel is null)
+{
+    return;
+}
+
+<MudTd DataLabel="User Name">@ViewModel.AccountInfo.Username</MudTd>
+<MudTd DataLabel="Account Type">@ViewModel.AccountInfo.AccountType</MudTd>
+<MudTd DataLabel="Remaining Time">@ViewModel.GetFormattedRemainingTime()</MudTd>
+
+<MudTd>
+    <MudSwitch T="bool" Size="Size.Medium" Disabled="@ViewModel.IsSwitchDisable()" Checked="@ViewModel.IsConnected" Color="Color.Primary" CheckedChanged=@(async () => await ViewModel.CheckedChangedAsync())>@(!ViewModel.IsConnected ? "Connect" : "Disconnect")</MudSwitch>
+    <MudButton StartIcon="@Icons.Material.Filled.Edit" Disabled="@ViewModel.IsEditDisable()" Color="Color.Primary" Size="Size.Medium" OnClick=@(async () => await ViewModel.EditAsync())>Edit</MudButton>
+    <MudButton StartIcon="@Icons.Material.Filled.Delete" Disabled="@ViewModel.IsDeleteDisable()" Color="Color.Error" Size="Size.Medium" OnClick=@(async () => await ViewModel.DeleteAsync())>Delete</MudButton>
+</MudTd>

@@ -3,7 +3,7 @@
 using System.Reflection;
 
 using Nothing.Nauta.App.Components.Attributes;
-using Nothing.Nauta.App.ViewModels;
+using Nothing.Nauta.App.ViewModels.Interfaces;
 
 public static class ComponentBaseExtensions
 {

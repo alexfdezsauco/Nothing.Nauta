@@ -3,13 +3,14 @@
 using Microsoft.AspNetCore.Components;
 using Nothing.Nauta.App.Components.Extensions;
 using Nothing.Nauta.App.Services.Interfaces;
-using Nothing.Nauta.App.ViewModels;
+using Nothing.Nauta.App.ViewModels.Interfaces;
 
 public class LayoutComponentBase<TViewModel> : LayoutComponentBase where TViewModel: IViewModel
 {
     [Inject]
     private IViewModelFactory? ViewModelFactory { get; set; }
 
+    [Parameter]
     public TViewModel? ViewModel { get; set; }
 
     protected override async Task OnInitializedAsync()

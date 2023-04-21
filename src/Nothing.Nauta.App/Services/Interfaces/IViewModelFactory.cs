@@ -1,6 +1,6 @@
 ﻿namespace Nothing.Nauta.App.Services.Interfaces;
 
-using Nothing.Nauta.App.ViewModels;
+using Nothing.Nauta.App.ViewModels.Interfaces;
 
 public interface IViewModelFactory
 {

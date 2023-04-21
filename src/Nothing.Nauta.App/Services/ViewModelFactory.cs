@@ -2,7 +2,7 @@
 
 namespace Nothing.Nauta.App.Services;
 
-using Nothing.Nauta.App.ViewModels;
+using Nothing.Nauta.App.ViewModels.Interfaces;
 
 public class ViewModelFactory : IViewModelFactory
 {

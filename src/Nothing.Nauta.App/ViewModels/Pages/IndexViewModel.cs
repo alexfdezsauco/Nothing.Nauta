@@ -29,14 +29,14 @@ public class IndexViewModel : ViewModelBase
     public override async Task InitializeAsync()
     {
         _sessionManager.StateChanged += OnSessionManagerStateChanged;
-        IsConnected = await _sessionManager.IsConnectedAsync();
+        this.IsSessionConnected = await _sessionManager.IsConnectedAsync();
 
         await ReloadAsync();
     }
 
     private void OnSessionManagerStateChanged(object? sender, SessionManagerStateChangeEventArg e)
     {
-        IsConnected = e.IsConnected;
+        this.IsSessionConnected = e.IsConnected;
     }
 
     public async Task ReloadAsync()
@@ -45,31 +45,24 @@ public class IndexViewModel : ViewModelBase
 
         try
         {
-            if (this.Accounts is not null)
+            // TODO: Improves this later, observable collections?
+            var accountViewModels = this.Accounts;
+            if (accountViewModels is not null)
             {
-                foreach (var accountViewModel in this.Accounts)
+                foreach (var accountViewModel in accountViewModels)
                 {
                     accountViewModel.Dispose();
                 }
             }
 
             var accounts = new List<AccountViewModel>();
-            foreach (var accountInfo in await _accountManagement!.ListAsync())
+            foreach (var accountInfo in await _accountManagement.ListAsync())
             {
                 var accountViewModel = await _viewModelFactory.CreateAsync<AccountViewModel>(accountInfo);
-                // TODO: Improve this later.
-                accountViewModel.InvokeAsync = InvokeAsync;
-                accountViewModel.PropertyChanged += (sender, args) =>
-                    {
-                        OnPropertyChanged(nameof(Accounts));
-                    };
-
                 accounts.Add(accountViewModel);
             }
 
-            Accounts ??= new List<AccountViewModel>();
-            Accounts.Clear();
-            Accounts.AddRange(accounts);
+            Accounts = accounts;
         }
         finally
         {
@@ -83,10 +76,10 @@ public class IndexViewModel : ViewModelBase
         private set => SetPropertyValue(nameof(Accounts), value);
     }
 
-    public bool IsConnected
+    public bool IsSessionConnected
     {
-        get => GetPropertyValue<bool>(nameof(IsConnected));
-        private set => SetPropertyValue(nameof(IsConnected), value);
+        get => GetPropertyValue<bool>(nameof(this.IsSessionConnected));
+        private set => SetPropertyValue(nameof(this.IsSessionConnected), value);
     }
     public bool IsReloading
     {
@@ -104,53 +97,6 @@ public class IndexViewModel : ViewModelBase
 
     public IDialogService DialogService { get; set; }
 
-
-    public bool IsSwitchDisable(AccountViewModel context)
-    {
-        return !context.IsConnected && IsConnected;
-    }
-
-    public bool IsEditDisable(AccountViewModel context)
-    {
-        return context.IsConnected;
-    }
-
-    public bool IsDeleteDisable(AccountViewModel context)
-    {
-        return context.IsConnected;
-    }
-
-    public async Task EditAsync(AccountViewModel context)
-    {
-        var accountInfo = context.AccountInfo.DeepClone();
-
-        var dialogParameters = new DialogParameters
-                                   {
-                                       { nameof(AddOrEditAccountDialog.AccountInfo), accountInfo }
-                                   };
-
-        var dialogReference = await this.DialogService.ShowAsync<AddOrEditAccountDialog>(string.Empty, dialogParameters);
-        if (await dialogReference.GetReturnValueIfNotCancelledAsync<bool>())
-        {
-            await _accountManagement.UpdateAsync(accountInfo);
-            await ReloadAsync();
-        }
-    }
-
-    public async Task DeleteAsync(AccountViewModel context)
-    {
-        var dialogParameters = new DialogParameters
-                                   {
-                                       { nameof(DeleteConfirmDialog.AccountInfo), context.AccountInfo }
-                                   };
-
-        var dialogReference = await this.DialogService!.ShowAsync<DeleteConfirmDialog>(string.Empty, dialogParameters);
-        if (await dialogReference.GetReturnValueIfNotCancelledAsync<bool>())
-        {
-            await _accountManagement!.RemoveAsync(context.AccountInfo);
-            await ReloadAsync();
-        }
-    }
 
     public async Task AddAccountAsync()
     {
@@ -172,11 +118,11 @@ public class IndexViewModel : ViewModelBase
     {
         if (!context.IsConnected)
         {
-            await BackgroundRunAsync(() => OpenAsync(context), ReloadAsync);
+            await BackgroundRunAsync(() => OpenAsync(context));
         }
         else
         {
-            await BackgroundRunAsync(CloseAsync, ReloadAsync, ForceConnectionCloseAsync);
+            await BackgroundRunAsync(CloseAsync, onErrorTask: ForceConnectionCloseAsync);
         }
     }
 

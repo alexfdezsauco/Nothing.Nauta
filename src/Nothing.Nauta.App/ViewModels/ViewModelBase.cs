@@ -6,13 +6,7 @@
     using Blorc.Data;
 
     using Nothing.Nauta.App.Annotations;
-
-    public interface IViewModel : Blorc.MVVM.IViewModel
-    {
-        Task InitializeAsync();
-
-        Func<Action, Task> InvokeAsync { get; set; }
-    }
+    using Nothing.Nauta.App.ViewModels.Interfaces;
 
     public class ViewModelBase : IViewModel
     {

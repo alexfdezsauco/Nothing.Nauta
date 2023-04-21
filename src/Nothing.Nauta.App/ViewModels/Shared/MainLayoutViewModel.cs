@@ -14,12 +14,12 @@ namespace Nothing.Nauta.App.ViewModels.Shared
         public override async Task InitializeAsync()
         {
             _sessionManager.StateChanged += OnSessionManagerStateChanged;
-            IsConnected = await _sessionManager.IsConnectedAsync();
+            this.IsSessionConnected = await _sessionManager.IsConnectedAsync();
         }
 
         private void OnSessionManagerStateChanged(object? sender, SessionManagerStateChangeEventArg e)
         {
-            IsConnected = e.IsConnected;
+            this.IsSessionConnected = e.IsConnected;
         }
 
         public bool IsDrawerOpen
@@ -28,10 +28,10 @@ namespace Nothing.Nauta.App.ViewModels.Shared
             set => SetPropertyValue(nameof(IsDrawerOpen), value);
         }
 
-        public bool IsConnected
+        public bool IsSessionConnected
         {
-            get => GetPropertyValue<bool>(nameof(IsConnected));
-            private set => SetPropertyValue(nameof(IsConnected), value);
+            get => GetPropertyValue<bool>(nameof(this.IsSessionConnected));
+            private set => SetPropertyValue(nameof(this.IsSessionConnected), value);
         }
 
         public void DrawerToggle()
