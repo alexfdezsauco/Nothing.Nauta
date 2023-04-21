@@ -1,7 +1,5 @@
 ﻿namespace Nothing.Nauta.App.Components;
 
-using AndroidX.Lifecycle;
-
 using Microsoft.AspNetCore.Components;
 using Nothing.Nauta.App.Components.Extensions;
 using Nothing.Nauta.App.Services.Interfaces;
