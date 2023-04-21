@@ -53,6 +53,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="Blorc.Core" Version="1.2.0" />
       <PackageReference Include="DeepCloner" Version="0.10.4" />
       <PackageReference Include="MudBlazor" Version="6.2.2" />
       <PackageReference Include="Polly" Version="7.2.3" />

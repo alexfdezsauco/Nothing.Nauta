@@ -1,57 +1,91 @@
 ﻿namespace Nothing.Nauta.App.Services;
 
+using System.Timers;
+
 using Nothing.Nauta.App.Data;
-using Nothing.Nauta.App.Data.Extensions;
+using Nothing.Nauta.App.Services.Interfaces;
+using Nothing.Nauta.App.ViewModels;
 
-public class AccountViewModel
+public class AccountViewModel : ViewModelBase, IDisposable
 {
-    private readonly Dictionary<string, string>? sessionData;
-
-    private TimeSpan? remainingTime;
+    private readonly ISessionManager _sessionManager;
+    private readonly Timer _timer = new Timer(1000);
 
     public AccountInfo AccountInfo { get; }
 
-    public AccountViewModel(AccountInfo accountInfo, Dictionary<string, string>? sessionData)
+    public AccountViewModel(AccountInfo accountInfo, ISessionManager sessionManager)
     {
-        this.sessionData = sessionData;
-        this.AccountInfo = accountInfo;
+        AccountInfo = accountInfo;
+        _sessionManager = sessionManager;
+        _timer.Elapsed += OnElapsed;
+    }
+
+    private void OnElapsed(object? sender, ElapsedEventArgs e)
+    {
+        Task.Run(
+            async () =>
+                {
+                    IsConnected = await _sessionManager.IsConnectedAsync(AccountInfo);
+                    if (!IsConnected)
+                    {
+                        _timer.Enabled = false;
+                    }
+                    else
+                    {
+                        RemainingTime = await _sessionManager.GetRemainingTimeAsync();
+                    }
+                });
+    }
+
+    public override async Task InitializeAsync()
+    {
+        IsConnected = await _sessionManager.IsConnectedAsync(AccountInfo);
+        if (IsConnected)
+        {
+            _timer.Enabled = true;
+        }
     }
 
     public bool IsConnected
     {
-        get
-        {
-            if (this.sessionData?.TryGetValue(SessionDataKeys.UserName, out var currentSessionUserName) ?? false)
-            {
-                return this.AccountInfo.GetUserName() == currentSessionUserName;
-            }
-
-            return false;
-        }
+        get => GetPropertyValue<bool>(nameof(IsConnected));
+        private set => SetPropertyValue(nameof(IsConnected), value);
     }
 
     public TimeSpan RemainingTime
     {
-        get
-        {
-            if (this.remainingTime is null)
-            {
-                return TimeSpan.Zero;
-            }
-
-            if (this.sessionData is null || !this.sessionData.TryGetValue(SessionDataKeys.Started, out var started) || !DateTime.TryParse(started, out var startDateTime))
-            {
-                return TimeSpan.Zero;
-            }
-
-            return this.remainingTime.Value.Subtract(DateTime.Now.Subtract(startDateTime));
-        }
-
-        set => this.remainingTime = value;
+        get => GetPropertyValue<TimeSpan>(nameof(RemainingTime));
+        private set => SetPropertyValue(nameof(RemainingTime), value);
     }
 
     public string GetFormattedRemainingTime()
     {
-        return $"{(int) this.RemainingTime.TotalHours:D2}:{this.RemainingTime.Minutes:D2}:{this.RemainingTime.Seconds:D2}";
+        return $"{(int) RemainingTime.TotalHours:D2}:{RemainingTime.Minutes:D2}:{RemainingTime.Seconds:D2}";
+    }
+
+    public void Dispose()
+    {
+        this._timer.Elapsed -= OnElapsed;
+        if (this._timer.Enabled)
+        {
+            this._timer.Enabled = false;
+        }
+
+        this._timer.Dispose();
+    }
+
+    public bool IsSwitchDisable()
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool IsEditDisable()
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool IsDeleteDisable()
+    {
+        throw new NotImplementedException();
     }
 }

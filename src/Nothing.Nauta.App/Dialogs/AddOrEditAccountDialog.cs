@@ -9,17 +9,16 @@
 
     public partial class AddOrEditAccountDialog
     {
+        private MudForm form;
+        private bool success;
+        private string[] errors;
+        private InputType passwordInput = InputType.Password;
+
         [Parameter]
         public AccountInfo? AccountInfo { get; set; }
 
         [CascadingParameter]
         private MudDialogInstance? MudDialog { get; set; }
-
-        private MudForm form;
-
-        private bool success;
-
-        private string[] errors;
 
         private void Cancel(MouseEventArgs arg)
         {
