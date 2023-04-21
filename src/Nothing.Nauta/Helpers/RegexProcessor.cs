@@ -2,7 +2,6 @@
 {
     using System;
     using System.Text.RegularExpressions;
-    using System.Threading.Tasks;
 
     using Nothing.Nauta.Helpers.Interfaces;
 

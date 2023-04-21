@@ -1,5 +1,7 @@
 ﻿namespace Nothing.Nauta.App
 {
+    using Blorc.Services;
+
     using Microsoft.EntityFrameworkCore;
 
     using MudBlazor.Services;
@@ -16,8 +18,8 @@
             var builder = MauiApp.CreateBuilder();
             builder.UseMauiApp<App>();
 
+            builder.Services.AddBlorcCore();
             builder.Services.AddMudServices();
-
             builder.Services.AddMauiBlazorWebView();
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();
@@ -25,6 +27,8 @@
 
             builder.Services.AddDbContext<AppDbContext>();
 
+            builder.Services.AddSingleton<IViewModelFactory, ViewModelFactory>();
+            builder.Services.AddSingleton<ISessionManager, SessionManager>();
             builder.Services.AddSingleton<ISessionHandler, SessionHandler>();
             builder.Services.AddSingleton<IAccountManagement, AccountManagement>();
             builder.Services.AddSingleton(_ => SecureStorage.Default);

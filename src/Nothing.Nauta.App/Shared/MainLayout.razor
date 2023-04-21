@@ -1,4 +1,9 @@
-﻿@inherits LayoutComponentBase
+﻿@inherits Nothing.Nauta.App.Components.LayoutComponentBase<Nothing.Nauta.App.ViewModels.Shared.MainLayoutViewModel>
+
+@if (ViewModel is null)
+{
+    return;
+}
 
 <MudThemeProvider />
 <MudDialogProvider />
@@ -6,9 +11,17 @@
 
 <MudLayout>
     <MudAppBar Elevation="0">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => ViewModel?.DrawerToggle())" />
         <MudText Align="Align.Center" Typo="Typo.h6">Nauta Session</MudText>
         <MudSpacer />
+        @if (ViewModel?.IsSessionConnected ?? false)
+        {
+            <MudIcon Icon="@Icons.Material.Filled.SignalWifi4Bar" Class="mr-5" />
+        }
+        else
+        {
+            <MudIcon Icon="@Icons.Material.Filled.SignalWifiOff" Class="mr-5" />
+        }
     </MudAppBar>
     <MudDrawer Elevation="1">
         <MudDrawerHeader>

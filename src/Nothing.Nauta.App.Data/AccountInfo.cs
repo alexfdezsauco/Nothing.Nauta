@@ -9,4 +9,6 @@ public class AccountInfo
     public string? Password { get; set; }
 
     public AccountType AccountType { get; set; } = AccountType.International;
+
+    //fpublic TimeSpan Rem
 }

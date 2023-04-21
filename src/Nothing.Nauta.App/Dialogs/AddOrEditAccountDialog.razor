@@ -10,7 +10,7 @@
     <DialogContent>
         <MudForm Model="@AccountInfo" @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
             <MudTextField T="string" Label="Username" Required="true" RequiredError="User name is required!" @bind-Value="AccountInfo.Username"/>
-            <MudTextField T="string" Label="Password" InputType="InputType.Password" Required="true" RequiredError="Password is required!" @bind-Value="AccountInfo.Password"/>
+            <MudTextField T="string" Label="Password" InputType="@passwordInput" Required="true" RequiredError="Password is required!" @bind-Value="AccountInfo.Password" />
             <MudRadioGroup T="AccountType" Required="true" RequiredError="Account type is required!" @bind-SelectedOption="AccountInfo.AccountType">
                 <MudRadio Option="AccountType.National">National</MudRadio>
                 <MudRadio Option="AccountType.International">International</MudRadio>

@@ -19,6 +19,7 @@ steps:
     version: '6.0.x'
 
 - task: JavaToolInstaller@0
+  displayName: Setup Java
   inputs:
     versionSpec: '11'
     jdkArchitectureOption: 'x64'
