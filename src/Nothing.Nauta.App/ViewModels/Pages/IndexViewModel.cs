@@ -10,6 +10,7 @@ using Nothing.Nauta.App.Data;
 using Nothing.Nauta.App.Data.Extensions;
 using Nothing.Nauta.App.Dialogs;
 using Nothing.Nauta.App.Services;
+using Nothing.Nauta.App.Services.EventArgs;
 using Nothing.Nauta.App.Services.Interfaces;
 using Nothing.Nauta.App.ViewModels;
 

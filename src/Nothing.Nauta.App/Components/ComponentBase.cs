@@ -1,40 +1,63 @@
 ﻿namespace Nothing.Nauta.App.Components;
 
+using System.ComponentModel;
+
 using Microsoft.AspNetCore.Components;
 using Nothing.Nauta.App.Components.Extensions;
 using Nothing.Nauta.App.Services.Interfaces;
 using Nothing.Nauta.App.ViewModels.Interfaces;
 
-public class ComponentBase<TViewModel> : ComponentBase where TViewModel : IViewModel
+public class ComponentBase<TViewModel> : Blorc.Components.BlorcComponentBase where TViewModel : class, IViewModel
 {
+    public ComponentBase()
+    {
+        PropertyChanged += OnPropertyChanged;
+    }
+
+    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(ViewModel))
+        {
+            InvokeAsync(() => StateHasChanged());
+        }
+    }
+
     [Inject]
     private IViewModelFactory? ViewModelFactory { get; set; }
 
     [Parameter]
-    public TViewModel? ViewModel { get; set; }
+    public TViewModel? ViewModel
+    {
+        get => GetPropertyValue<TViewModel>(nameof(ViewModel));
+        set => SetPropertyValue(nameof(ViewModel), value);
+    }
 
     protected override async Task OnInitializedAsync()
     {
-        await this.InitializeViewModelAsync();
+        await InitializeViewModelAsync();
     }
 
     private async Task InitializeViewModelAsync()
     {
-        if (this.ViewModelFactory is null)
+        if (ViewModelFactory is null)
         {
             return;
         }
 
-        if (this.ViewModel is null)
+        if (ViewModel is null)
         {
-            this.ViewModel = this.ViewModelFactory.Create<TViewModel>();
+            ViewModel = ViewModelFactory.Create<TViewModel>();
         }
 
         this.MapViewToViewModelProperties();
-        this.ViewModel.PropertyChanged += (sender, args) => { this.InvokeAsync(this.StateHasChanged); };
+        ViewModel.PropertyChanged += this.OnViewModelPropertyChanged;
+        ViewModel.InvokeAsync = InvokeAsync;
 
-        this.ViewModel.InvokeAsync = this.InvokeAsync;
+        await ViewModel.InitializeAsync();
+    }
 
-        await this.ViewModel.InitializeAsync();
+    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        InvokeAsync(StateHasChanged);
     }
 }

@@ -8,6 +8,7 @@ using MudBlazor;
 
 using Nothing.Nauta.App.Data;
 using Nothing.Nauta.App.Dialogs;
+using Nothing.Nauta.App.Services.EventArgs;
 using Nothing.Nauta.App.Services.Interfaces;
 using Nothing.Nauta.App.ViewModels;
 using Nothing.Nauta.App.ViewModels.Pages;
@@ -23,8 +24,6 @@ public class AccountViewModel : ViewModelBase, IDisposable
         AccountInfo = accountInfo;
         _sessionManager = sessionManager;
         _accountManagement = accountManagement;
-
-        _timer.Elapsed += OnTimerElapsed;
     }
 
     private void OnTimerElapsed(object? sender, ElapsedEventArgs e)
@@ -39,19 +38,16 @@ public class AccountViewModel : ViewModelBase, IDisposable
                     }
                     else
                     {
-                        RemainingTime = await _sessionManager.GetRemainingTimeAsync();
+                        var (total, remainingTime) = await _sessionManager.GetTimeAsync();
+                        TotalTime = total;
+                        RemainingTime = remainingTime;
                     }
                 });
     }
 
-    public AccountInfo AccountInfo
-    {
-        get => GetPropertyValue<AccountInfo>(nameof(AccountInfo));
-        private set => SetPropertyValue(nameof(AccountInfo), value);
-    }
-
     public override async Task InitializeAsync()
     {
+        _timer.Elapsed += OnTimerElapsed;
         _sessionManager.StateChanged += OnSessionManagerStateChanged;
         await UpdateConnectionStatusAsync();
     }
@@ -65,7 +61,21 @@ public class AccountViewModel : ViewModelBase, IDisposable
     {
         IsConnected = await _sessionManager.IsConnectedAsync(AccountInfo);
         IsSessionConnected = await _sessionManager.IsConnectedAsync();
-        _timer.Enabled = IsConnected;
+
+        try
+        {
+            _timer.Enabled = IsConnected;
+        }
+        catch (ObjectDisposedException)
+        {
+            // ignore:
+        }
+    }
+
+    public AccountInfo AccountInfo
+    {
+        get => GetPropertyValue<AccountInfo>(nameof(AccountInfo));
+        private set => SetPropertyValue(nameof(AccountInfo), value);
     }
 
     public bool IsConnected
@@ -80,41 +90,36 @@ public class AccountViewModel : ViewModelBase, IDisposable
         private set => SetPropertyValue(nameof(IsSessionConnected), value);
     }
 
-
     public TimeSpan RemainingTime
     {
         get => GetPropertyValue<TimeSpan>(nameof(RemainingTime));
         private set => SetPropertyValue(nameof(RemainingTime), value);
     }
 
-    public string GetFormattedRemainingTime()
+    public TimeSpan TotalTime
     {
-        return $"{(int)RemainingTime.TotalHours:D2}:{RemainingTime.Minutes:D2}:{RemainingTime.Seconds:D2}";
+        get => GetPropertyValue<TimeSpan>(nameof(TotalTime));
+        private set => SetPropertyValue(nameof(TotalTime), value);
     }
+
+    public string FormattedRemainingTime => $"{(int) RemainingTime.TotalHours:D2}:{RemainingTime.Minutes:D2}:{RemainingTime.Seconds:D2}";
+
+    public bool IsSwitchDisable => !IsConnected && IsSessionConnected;
+
+    public bool IsEditDisable => IsConnected;
+
+    public bool IsDeleteDisable => IsConnected;
+
+    public IDialogService DialogService { get; set; }
+
+    public IndexViewModel IndexViewModel { get; set; }
 
     public void Dispose()
     {
         _sessionManager.StateChanged -= OnSessionManagerStateChanged;
         _timer.Elapsed -= OnTimerElapsed;
         _timer.Enabled = false;
-
-        // TODO: Fix this, not sure why it is not working properly
-        // _timer.Dispose();
-    }
-
-    public bool IsSwitchDisable()
-    {
-        return !IsConnected && IsSessionConnected;
-    }
-
-    public bool IsEditDisable()
-    {
-        return IsConnected;
-    }
-
-    public bool IsDeleteDisable()
-    {
-        return IsConnected;
+        _timer.Dispose();
     }
 
     public async Task EditAsync()
@@ -133,10 +138,6 @@ public class AccountViewModel : ViewModelBase, IDisposable
             AccountInfo = accountInfo;
         }
     }
-
-    public IDialogService DialogService { get; set; }
-
-    public IndexViewModel IndexViewModel { get; set; }
 
     public async Task DeleteAsync()
     {
@@ -159,5 +160,32 @@ public class AccountViewModel : ViewModelBase, IDisposable
     {
         // TODO: Improve this later.
         await IndexViewModel.CheckedChangedAsync(this);
+    }
+
+    public double RemainingTimePercent
+    {
+        get
+        {
+            var remainingTimePercent = 100d * (RemainingTime.TotalHours / TotalTime.TotalHours);
+            return double.IsNaN(remainingTimePercent) ? 0 : remainingTimePercent;
+        }
+    }
+
+    public Color RemainingTimeProgressBarColor
+    {
+        get
+        {
+            if (RemainingTime.TotalMinutes < 5)
+            {
+                return Color.Warning;
+            }
+
+            if (RemainingTime.TotalMinutes < 1)
+            {
+                return Color.Error;
+            }
+
+            return Color.Success;
+        }
     }
 }

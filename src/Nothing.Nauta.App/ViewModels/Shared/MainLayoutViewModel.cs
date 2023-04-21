@@ -1,4 +1,5 @@
-﻿using Nothing.Nauta.App.Services.Interfaces;
+﻿using Nothing.Nauta.App.Services.EventArgs;
+using Nothing.Nauta.App.Services.Interfaces;
 
 namespace Nothing.Nauta.App.ViewModels.Shared
 {

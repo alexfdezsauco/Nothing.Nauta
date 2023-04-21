@@ -1,11 +1,15 @@
 ﻿namespace Nothing.Nauta.App.Services;
 
+using System.Collections.Concurrent;
+
 using Nothing.Nauta.App.Data;
 using Nothing.Nauta.App.Data.Extensions;
 using Nothing.Nauta.App.Services.Interfaces;
 using System.Text.Json;
 
 using Nothing.Nauta.Interfaces;
+using System;
+using Nothing.Nauta.App.Services.EventArgs;
 
 public class 
     SessionManager : ISessionManager
@@ -15,6 +19,8 @@ public class
     private readonly ISecureStorage _secureStorage;
 
     private readonly ISessionHandler _sessionHandler;
+
+    private TimeSpan? _remainingTime;
 
     public event EventHandler<SessionManagerStateChangeEventArg>? StateChanged;
 
@@ -40,17 +46,20 @@ public class
         return sessionData;
     }
 
-    public async Task<TimeSpan> GetRemainingTimeAsync()
+    public ConcurrentDictionary<string, TimeSpan> TimeSpans { get; set; }
+
+    public async Task<(TimeSpan, TimeSpan)> GetTimeAsync()
     {
         var sessionData = await GetSessionDataAsync();
         if (sessionData is null || !sessionData.TryGetValue(SessionDataKeys.Started, out var started) || !DateTime.TryParse(started, out var startDateTime))
         {
-            return TimeSpan.Zero;
+            return (TimeSpan.Zero, TimeSpan.Zero);
         }
 
-        var remainingTime = await _sessionHandler.RemainingTimeAsync(sessionData);
+        this._remainingTime ??= await this._sessionHandler.RemainingTimeAsync(sessionData);
 
-        return remainingTime.Subtract(DateTime.Now.Subtract(startDateTime));
+        var remainingTime = _remainingTime.Value;
+        return (remainingTime, remainingTime.Subtract(DateTime.Now.Subtract(startDateTime)));
     }
 
     public async Task OpenAsync(string userName, string? password)
@@ -67,7 +76,8 @@ public class
     {
         var sessionData = await GetSessionDataAsync();
         await _sessionHandler.CloseAsync(sessionData);
-        _secureStorage!.Remove(NautaSessionData);
+        _remainingTime = null;
+        _secureStorage.Remove(NautaSessionData);
         OnStateChanged(new SessionManagerStateChangeEventArg(false));
     }
 

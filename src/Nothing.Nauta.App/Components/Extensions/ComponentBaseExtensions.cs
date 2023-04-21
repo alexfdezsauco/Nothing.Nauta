@@ -8,7 +8,7 @@ using Nothing.Nauta.App.ViewModels.Interfaces;
 public static class ComponentBaseExtensions
 {
     public static void MapViewToViewModelProperties<TViewModel>(this ComponentBase<TViewModel> component)
-        where TViewModel : IViewModel
+        where TViewModel : class, IViewModel
     {
         var viewToViewModelProperties = component.GetType()
             .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy).Select(

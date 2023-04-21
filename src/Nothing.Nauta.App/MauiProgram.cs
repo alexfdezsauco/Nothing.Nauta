@@ -1,5 +1,7 @@
 ﻿namespace Nothing.Nauta.App
 {
+    using Blorc.Services;
+
     using Microsoft.EntityFrameworkCore;
 
     using MudBlazor.Services;
@@ -16,6 +18,7 @@
             var builder = MauiApp.CreateBuilder();
             builder.UseMauiApp<App>();
 
+            builder.Services.AddBlorcCore();
             builder.Services.AddMudServices();
             builder.Services.AddMauiBlazorWebView();
 #if DEBUG

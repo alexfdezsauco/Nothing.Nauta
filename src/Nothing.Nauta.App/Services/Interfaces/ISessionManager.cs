@@ -1,6 +1,7 @@
 ﻿namespace Nothing.Nauta.App.Services.Interfaces;
 
 using Nothing.Nauta.App.Data;
+using Nothing.Nauta.App.Services.EventArgs;
 
 public interface ISessionManager
 {
@@ -10,7 +11,7 @@ public interface ISessionManager
 
     Task<Dictionary<string, string>?> GetSessionDataAsync();
 
-    Task<TimeSpan> GetRemainingTimeAsync();
+    Task<(TimeSpan, TimeSpan)> GetTimeAsync();
 
     Task OpenAsync(string userName, string? password);
 
@@ -19,14 +20,4 @@ public interface ISessionManager
     Task ForceCloseAsync();
 
     Task<bool> IsConnectedAsync();
-}
-
-public class SessionManagerStateChangeEventArg
-{
-    public bool IsConnected { get; }
-
-    public SessionManagerStateChangeEventArg(bool isConnected)
-    {
-        this.IsConnected = isConnected;
-    }
 }
