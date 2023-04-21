@@ -24,18 +24,24 @@ public class AccountViewModel : ViewModelBase, IDisposable
         _sessionManager = sessionManager;
         _accountManagement = accountManagement;
 
-        _timer.Elapsed += async (sender, args) =>
-            {
-                IsConnected = await _sessionManager.IsConnectedAsync(AccountInfo);
-                if (!IsConnected)
+        _timer.Elapsed += OnTimerElapsed;
+    }
+
+    private void OnTimerElapsed(object? sender, ElapsedEventArgs e)
+    {
+        InvokeAsync?.Invoke(
+            async () =>
                 {
-                    _timer.Enabled = false;
-                }
-                else
-                {
-                    RemainingTime = await _sessionManager.GetRemainingTimeAsync();
-                }
-            };
+                    IsConnected = await _sessionManager.IsConnectedAsync(AccountInfo);
+                    if (!IsConnected)
+                    {
+                        _timer.Enabled = false;
+                    }
+                    else
+                    {
+                        RemainingTime = await _sessionManager.GetRemainingTimeAsync();
+                    }
+                });
     }
 
     public AccountInfo AccountInfo
@@ -46,20 +52,20 @@ public class AccountViewModel : ViewModelBase, IDisposable
 
     public override async Task InitializeAsync()
     {
-        _sessionManager.StateChanged += this.OnSessionManagerStateChanged;
-        await this.UpdateConnectionStatusAsync();
+        _sessionManager.StateChanged += OnSessionManagerStateChanged;
+        await UpdateConnectionStatusAsync();
     }
 
     private void OnSessionManagerStateChanged(object? sender, SessionManagerStateChangeEventArg e)
     {
-        InvokeAsync?.Invoke(async () => await this.UpdateConnectionStatusAsync()) ;
+        InvokeAsync?.Invoke(async () => await UpdateConnectionStatusAsync());
     }
 
     private async Task UpdateConnectionStatusAsync()
     {
-        this.IsConnected = await this._sessionManager.IsConnectedAsync(this.AccountInfo);
-        this.IsSessionConnected = await this._sessionManager.IsConnectedAsync();
-        this._timer.Enabled = this.IsConnected;
+        IsConnected = await _sessionManager.IsConnectedAsync(AccountInfo);
+        IsSessionConnected = await _sessionManager.IsConnectedAsync();
+        _timer.Enabled = IsConnected;
     }
 
     public bool IsConnected
@@ -83,14 +89,17 @@ public class AccountViewModel : ViewModelBase, IDisposable
 
     public string GetFormattedRemainingTime()
     {
-        return $"{(int) RemainingTime.TotalHours:D2}:{RemainingTime.Minutes:D2}:{RemainingTime.Seconds:D2}";
+        return $"{(int)RemainingTime.TotalHours:D2}:{RemainingTime.Minutes:D2}:{RemainingTime.Seconds:D2}";
     }
 
     public void Dispose()
     {
-        _sessionManager.StateChanged -= this.OnSessionManagerStateChanged;
+        _sessionManager.StateChanged -= OnSessionManagerStateChanged;
+        _timer.Elapsed -= OnTimerElapsed;
         _timer.Enabled = false;
-        _timer.Dispose();
+
+        // TODO: Fix this, not sure why it is not working properly
+        // _timer.Dispose();
     }
 
     public bool IsSwitchDisable()
