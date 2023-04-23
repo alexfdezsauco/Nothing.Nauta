@@ -1,3 +1,9 @@
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="SessionHandlerTests.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2023 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
 namespace Nauta.Tests
 {
     using System.Collections.Generic;
@@ -38,7 +44,7 @@ namespace Nauta.Tests
         {
             var content = await File.ReadAllTextAsync("session.json");
             var sessionData = JsonConvert.DeserializeObject<Dictionary<string, string>>(content);
-            
+
             var sessionHandler = new SessionHandler();
             await sessionHandler.RemainingTimeAsync(sessionData);
         }

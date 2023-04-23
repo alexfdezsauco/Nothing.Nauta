@@ -1,4 +1,10 @@
-﻿namespace Nothing.Nauta.Extensions
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="HttpResponseMessageExtensions.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2023 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nothing.Nauta.Extensions
 {
     using System.Net.Http;
     using System.Threading.Tasks;

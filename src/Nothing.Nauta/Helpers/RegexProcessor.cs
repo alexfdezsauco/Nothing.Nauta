@@ -1,4 +1,10 @@
-﻿namespace Nothing.Nauta.Helpers
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="RegexProcessor.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2023 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nothing.Nauta.Helpers
 {
     using System;
     using System.Text.RegularExpressions;

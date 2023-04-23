@@ -1,0 +1,10 @@
+<Project>
+  <!-- 
+    This file applies to all projects automatically. Project specific values should go into Directory.Build.project.props
+  -->
+
+  <!-- ..\ -->
+
+  <Import Project="$(MSBuildProjectDirectory)\..\Directory.Build.analyzers.props"
+          Condition="$(RepositoryTemplateIgnoreBuildAnalyzersProps) != 'true' And Exists('$(MSBuildProjectDirectory)\..\Directory.Build.analyzers.props')" />
+</Project>

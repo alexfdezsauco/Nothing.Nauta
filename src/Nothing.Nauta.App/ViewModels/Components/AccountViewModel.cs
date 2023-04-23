@@ -1,4 +1,10 @@
-﻿namespace Nothing.Nauta.App.ViewModels.Components;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="AccountViewModel.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2023 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nothing.Nauta.App.ViewModels.Components;
 
 using System.Timers;
 
@@ -15,17 +21,39 @@ using Nothing.Nauta.App.ViewModels.Pages;
 
 public class AccountViewModel : ViewModelBase, IDisposable
 {
-    private readonly ISessionManager _sessionManager;
-    private readonly IAccountManagement _accountManagement;
-    private readonly IDeviceDisplay _deviceDisplay;
-    private readonly Timer _timer = new Timer(1000);
+    private readonly ISessionManager sessionManager;
+    private readonly IAccountRepository accountRepository;
+    private readonly IDeviceDisplay deviceDisplay;
+    private readonly Timer timer = new Timer(1000);
 
-    public AccountViewModel(AccountInfo accountInfo, ISessionManager sessionManager, IAccountManagement accountManagement, IDeviceDisplay deviceDisplay)
+    public AccountViewModel(AccountInfo accountInfo, ISessionManager sessionManager, IAccountRepository accountRepository, IDeviceDisplay deviceDisplay)
     {
-        AccountInfo = accountInfo;
-        _sessionManager = sessionManager;
-        _accountManagement = accountManagement;
-        _deviceDisplay = deviceDisplay;
+        this.AccountInfo = accountInfo;
+        this.sessionManager = sessionManager;
+        this.accountRepository = accountRepository;
+        this.deviceDisplay = deviceDisplay;
+    }
+
+    public AccountInfo AccountInfo
+    {
+        get => this.GetPropertyValue<AccountInfo>(nameof(this.AccountInfo));
+        private set => this.SetPropertyValue(nameof(this.AccountInfo), value);
+    }
+
+    public bool IsConnected
+    {
+        get => this.GetPropertyValue<bool>(nameof(this.IsConnected));
+        private set => this.SetPropertyValue(nameof(this.IsConnected), value);
+    }
+
+    public override async Task InitializeAsync()
+    {
+        this.deviceDisplay.MainDisplayInfoChanged += this.OnDeviceDisplayMainDisplayInfoChanged;
+        this.DisplayOrientation = this.deviceDisplay.MainDisplayInfo.Orientation;
+
+        this.timer.Elapsed += this.OnTimerElapsed;
+        this.sessionManager.StateChanged += this.OnSessionManagerStateChanged;
+        await this.UpdateConnectionStatusAsync();
     }
 
     private void OnTimerElapsed(object? sender, ElapsedEventArgs e)
@@ -33,48 +61,38 @@ public class AccountViewModel : ViewModelBase, IDisposable
         _ = Task.Run(
             async () =>
                 {
-                    IsConnected = await _sessionManager.IsConnectedAsync(AccountInfo);
-                    if (!IsConnected)
+                    this.IsConnected = await this.sessionManager.IsConnectedAsync(this.AccountInfo);
+                    if (!this.IsConnected)
                     {
-                        _timer.Enabled = false;
+                        this.timer.Enabled = false;
                     }
                     else
                     {
-                        var (total, remainingTime) = await _sessionManager.GetTimeAsync();
-                        TotalTime = total;
-                        RemainingTime = remainingTime;
+                        var (total, remainingTime) = await this.sessionManager.GetTimeAsync();
+                        this.TotalTime = total;
+                        this.RemainingTime = remainingTime;
                     }
                 });
     }
 
-    public override async Task InitializeAsync()
-    {
-        _deviceDisplay.MainDisplayInfoChanged += this.OnDeviceDisplayMainDisplayInfoChanged;
-        DisplayOrientation = _deviceDisplay.MainDisplayInfo.Orientation;
-
-        _timer.Elapsed += OnTimerElapsed;
-        _sessionManager.StateChanged += OnSessionManagerStateChanged;
-        await UpdateConnectionStatusAsync();
-    }
-
     private void OnDeviceDisplayMainDisplayInfoChanged(object? sender, DisplayInfoChangedEventArgs e)
     {
-        DisplayOrientation = e.DisplayInfo.Orientation;
+        this.DisplayOrientation = e.DisplayInfo.Orientation;
     }
 
     private void OnSessionManagerStateChanged(object? sender, SessionManagerStateChangeEventArg e)
     {
-        InvokeAsync?.Invoke(async () => await UpdateConnectionStatusAsync());
+        this.InvokeAsync?.Invoke(async () => await this.UpdateConnectionStatusAsync());
     }
 
     private async Task UpdateConnectionStatusAsync()
     {
-        IsConnected = await _sessionManager.IsConnectedAsync(AccountInfo);
-        IsSessionConnected = await _sessionManager.IsConnectedAsync();
+        this.IsConnected = await this.sessionManager.IsConnectedAsync(this.AccountInfo);
+        this.IsSessionConnected = await this.sessionManager.IsConnectedAsync();
 
         try
         {
-            _timer.Enabled = IsConnected;
+            this.timer.Enabled = this.IsConnected;
         }
         catch (ObjectDisposedException)
         {
@@ -82,116 +100,47 @@ public class AccountViewModel : ViewModelBase, IDisposable
         }
     }
 
-    public AccountInfo AccountInfo
-    {
-        get => GetPropertyValue<AccountInfo>(nameof(AccountInfo));
-        private set => SetPropertyValue(nameof(AccountInfo), value);
-    }
-
-    public bool IsConnected
-    {
-        get => GetPropertyValue<bool>(nameof(IsConnected));
-        private set => SetPropertyValue(nameof(IsConnected), value);
-    }
-
     public bool IsSessionConnected
     {
-        get => GetPropertyValue<bool>(nameof(IsSessionConnected));
-        private set => SetPropertyValue(nameof(IsSessionConnected), value);
+        get => this.GetPropertyValue<bool>(nameof(this.IsSessionConnected));
+        private set => this.SetPropertyValue(nameof(this.IsSessionConnected), value);
     }
 
     public TimeSpan RemainingTime
     {
-        get => GetPropertyValue<TimeSpan>(nameof(RemainingTime));
-        private set => SetPropertyValue(nameof(RemainingTime), value);
+        get => this.GetPropertyValue<TimeSpan>(nameof(this.RemainingTime));
+        private set => this.SetPropertyValue(nameof(this.RemainingTime), value);
     }
 
     public TimeSpan TotalTime
     {
-        get => GetPropertyValue<TimeSpan>(nameof(TotalTime));
-        private set => SetPropertyValue(nameof(TotalTime), value);
+        get => this.GetPropertyValue<TimeSpan>(nameof(this.TotalTime));
+        private set => this.SetPropertyValue(nameof(this.TotalTime), value);
     }
 
     public DisplayOrientation DisplayOrientation
     {
-        get => GetPropertyValue<DisplayOrientation>(nameof(DisplayOrientation));
-        private set => SetPropertyValue(nameof(DisplayOrientation), value);
+        get => this.GetPropertyValue<DisplayOrientation>(nameof(this.DisplayOrientation));
+        private set => this.SetPropertyValue(nameof(this.DisplayOrientation), value);
     }
 
-    public string FormattedRemainingTime => $"{(int)RemainingTime.TotalHours:D2}:{RemainingTime.Minutes:D2}:{RemainingTime.Seconds:D2}";
+    public string FormattedRemainingTime => $"{(int)this.RemainingTime.TotalHours:D2}:{this.RemainingTime.Minutes:D2}:{this.RemainingTime.Seconds:D2}";
 
-    public bool IsSwitchDisable => !IsConnected && IsSessionConnected;
+    public bool IsSwitchDisable => !this.IsConnected && this.IsSessionConnected;
 
-    public bool IsEditDisable => IsConnected;
+    public bool IsEditDisable => this.IsConnected;
 
-    public bool IsDeleteDisable => IsConnected;
+    public bool IsDeleteDisable => this.IsConnected;
 
     public IDialogService? DialogService { get; set; }
 
     public IndexViewModel? IndexViewModel { get; set; }
 
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if (disposing)
-        {
-            _sessionManager.StateChanged -= OnSessionManagerStateChanged;
-            _timer.Elapsed -= OnTimerElapsed;
-            _timer.Enabled = false;
-            _timer.Dispose();
-        }
-    }
-
-    public async Task EditAsync()
-    {
-        var accountInfo = AccountInfo.DeepClone();
-
-        var dialogParameters = new DialogParameters
-                                   {
-                                       { nameof(AddOrEditAccountDialog.AccountInfo), accountInfo }
-                                   };
-
-        var dialogReference = await DialogService!.ShowAsync<AddOrEditAccountDialog>(string.Empty, dialogParameters);
-        if (await dialogReference.GetReturnValueIfNotCancelledAsync<bool>())
-        {
-            await _accountManagement.UpdateAsync(accountInfo);
-            AccountInfo = accountInfo;
-        }
-    }
-
-    public async Task DeleteAsync()
-    {
-        var dialogParameters = new DialogParameters
-                                   {
-                                       { nameof(DeleteConfirmDialog.AccountInfo), AccountInfo }
-                                   };
-
-        var dialogReference = await DialogService!.ShowAsync<DeleteConfirmDialog>(string.Empty, dialogParameters);
-        if (await dialogReference.GetReturnValueIfNotCancelledAsync<bool>())
-        {
-            await _accountManagement.RemoveAsync(AccountInfo);
-
-            // TODO: Improve this later.
-            await IndexViewModel!.ReloadAsync();
-        }
-    }
-
-    public async Task CheckedChangedAsync()
-    {
-        // TODO: Improve this later.
-        await IndexViewModel!.CheckedChangedAsync(this);
-    }
-
     public double RemainingTimePercent
     {
         get
         {
-            var remainingTimePercent = 100d * (RemainingTime.TotalHours / TotalTime.TotalHours);
+            var remainingTimePercent = 100d * (this.RemainingTime.TotalHours / this.TotalTime.TotalHours);
             return double.IsNaN(remainingTimePercent) ? 0 : remainingTimePercent;
         }
     }
@@ -200,17 +149,74 @@ public class AccountViewModel : ViewModelBase, IDisposable
     {
         get
         {
-            if (RemainingTime.TotalMinutes < 1)
+            if (this.RemainingTime.TotalMinutes < 1)
             {
                 return Color.Error;
             }
 
-            if (RemainingTime.TotalMinutes < 5)
+            if (this.RemainingTime.TotalMinutes < 5)
             {
                 return Color.Warning;
             }
 
             return Color.Success;
         }
+    }
+
+    public void Dispose()
+    {
+        this.Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    public async Task EditAsync()
+    {
+        var accountInfo = this.AccountInfo.DeepClone();
+
+        var dialogParameters = new DialogParameters
+                                   {
+                                       { nameof(AddOrEditAccountDialog.AccountInfo), accountInfo },
+                                   };
+
+        var dialogReference = await this.DialogService!.ShowAsync<AddOrEditAccountDialog>(string.Empty, dialogParameters);
+        if (await dialogReference.GetReturnValueIfNotCancelledAsync<bool>())
+        {
+            await this.accountRepository.UpdateAsync(accountInfo);
+            this.AccountInfo = accountInfo;
+        }
+    }
+
+    public async Task DeleteAsync()
+    {
+        var dialogParameters = new DialogParameters
+                                   {
+                                       { nameof(DeleteConfirmDialog.AccountInfo), this.AccountInfo },
+                                   };
+
+        var dialogReference = await this.DialogService!.ShowAsync<DeleteConfirmDialog>(string.Empty, dialogParameters);
+        if (await dialogReference.GetReturnValueIfNotCancelledAsync<bool>())
+        {
+            await this.accountRepository.RemoveAsync(this.AccountInfo);
+
+            // TODO: Improve this later.
+            await this.IndexViewModel!.ReloadAsync();
+        }
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            this.sessionManager.StateChanged -= this.OnSessionManagerStateChanged;
+            this.timer.Elapsed -= this.OnTimerElapsed;
+            this.timer.Enabled = false;
+            this.timer.Dispose();
+        }
+    }
+
+    public async Task CheckedChangedAsync()
+    {
+        // TODO: Improve this later.
+        await this.IndexViewModel!.CheckedChangedAsync(this);
     }
 }

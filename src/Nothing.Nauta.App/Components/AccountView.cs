@@ -1,9 +1,13 @@
-﻿using Microsoft.AspNetCore.Components;
-using MudBlazor;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="AccountView.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2023 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Nothing.Nauta.App.Components
 {
-    using Microsoft.Maui.Devices;
+    using Microsoft.AspNetCore.Components;
+    using MudBlazor;
     using Nothing.Nauta.App.Components.Attributes;
     using Nothing.Nauta.App.ViewModels.Pages;
 

@@ -1,19 +1,20 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="AppDbContextFactory.cs" company="Stone Assemblies">
+// <copyright file="IAccountRepository.cs" company="Stone Assemblies">
 // Copyright © 2021 - 2023 Stone Assemblies. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Nothing.Nauta.App.Models;
-
-using Microsoft.EntityFrameworkCore.Design;
+namespace Nothing.Nauta.App.Services.Interfaces;
 
 using Nothing.Nauta.App.Data;
 
-public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
+public interface IAccountRepository
 {
-    public AppDbContext CreateDbContext(string[] args)
-    {
-        return new AppDbContext();
-    }
+    Task AddAsync(AccountInfo accountInfo);
+
+    Task<List<AccountInfo>> ListAsync();
+
+    Task UpdateAsync(AccountInfo accountInfo);
+
+    Task RemoveAsync(AccountInfo accountInfo);
 }

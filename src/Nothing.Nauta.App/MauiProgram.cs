@@ -1,4 +1,10 @@
-﻿namespace Nothing.Nauta.App
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="MauiProgram.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2023 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nothing.Nauta.App
 {
     using Blorc.Services;
 
@@ -32,8 +38,7 @@
             builder.Services.AddSingleton<ITimeService, TimeService>();
             builder.Services.AddSingleton<ISessionManager, SessionManager>();
             builder.Services.AddSingleton<ISessionHandler, SessionHandler>();
-            builder.Services.AddSingleton<IAccountManagement, AccountManagement>();
-
+            builder.Services.AddSingleton<IAccountRepository, AccountRepository>();
 
             builder.Services.AddSingleton(_ => SecureStorage.Default);
             builder.Services.AddSingleton(_ => DeviceDisplay.Current);

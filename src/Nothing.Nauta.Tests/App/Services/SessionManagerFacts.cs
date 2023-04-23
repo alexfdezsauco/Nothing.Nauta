@@ -1,22 +1,21 @@
-﻿namespace Nothing.Nauta.Tests.App.Services
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="SessionManagerFacts.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2023 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nothing.Nauta.Tests.App.Services
 {
     using System;
     using System.Collections.Generic;
-    using System.Threading.Tasks;
-
-    using Microsoft.Maui.Storage;
-
-    using Moq;
-
-    using Nothing.Nauta.App.Services;
-    using Nothing.Nauta.Interfaces;
-
     using System.Text.Json;
-
+    using System.Threading.Tasks;
     using FluentAssertions;
-
+    using Microsoft.Maui.Storage;
+    using Moq;
+    using Nothing.Nauta.App.Services;
     using Nothing.Nauta.App.Services.Interfaces;
-
+    using Nothing.Nauta.Interfaces;
     using Xunit;
 
     public class SessionManagerFacts
@@ -41,7 +40,7 @@
                                       {
                                           { SessionDataKeys.SessionId, Guid.NewGuid().ToString() },
                                           { SessionDataKeys.UserName, Guid.NewGuid().ToString() },
-                                          { SessionDataKeys.Started, DateTime.Now.ToString() }
+                                          { SessionDataKeys.Started, DateTime.Now.ToString() },
                                       };
 
                 sessionHandlerMock.Setup(handler => handler.OpenAsync(It.IsAny<string>(), It.IsAny<string>()))
@@ -68,31 +67,22 @@
                                  {
                                      GetSerializedSessionData(sessionStartedTime),
                                      sessionStartedTime.Add(TimeSpan.FromMinutes(2)),
-                                     TimeSpan.FromMinutes(3), TimeSpan.FromMinutes(1)
-                                 }; 
-                
+                                     TimeSpan.FromMinutes(3), TimeSpan.FromMinutes(1),
+                                 };
+
                 yield return new object[]
                                  {
                                      GetSerializedSessionData(sessionStartedTime),
                                      sessionStartedTime.Add(TimeSpan.FromMinutes(1)),
-                                     TimeSpan.FromMinutes(3), TimeSpan.FromMinutes(2)
-                                 };   
-                
+                                     TimeSpan.FromMinutes(3), TimeSpan.FromMinutes(2),
+                                 };
+
                 yield return new object[]
                                  {
                                      GetSerializedSessionData(sessionStartedTime),
                                      sessionStartedTime.Add(TimeSpan.FromMinutes(1.5)),
-                                     TimeSpan.FromMinutes(3), TimeSpan.FromMinutes(1.5)
+                                     TimeSpan.FromMinutes(3), TimeSpan.FromMinutes(1.5),
                                  };
-            }
-
-            private static string GetSerializedSessionData(DateTime started)
-            {
-                return JsonSerializer.Serialize(
-                    new Dictionary<string, string>
-                        {
-                            { SessionDataKeys.Started, started.ToString(SessionManager.StartedTimeFormat) }
-                        });
             }
 
             [Theory]
@@ -115,6 +105,15 @@
 
                 total.Should().Be(expectedTotal);
                 remainingTime.Should().Be(expectedRemainingTime);
+            }
+
+            private static string GetSerializedSessionData(DateTime started)
+            {
+                return JsonSerializer.Serialize(
+                    new Dictionary<string, string>
+                        {
+                            { SessionDataKeys.Started, started.ToString(SessionManager.StartedTimeFormat) },
+                        });
             }
         }
     }

@@ -1,19 +1,20 @@
-﻿namespace Nothing.Nauta.Tests.App.Services
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="SessionManagerFacts.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2023 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nothing.Nauta.Tests.App.Services
 {
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-
-    using Moq;
-
     using FluentAssertions;
-
     using Microsoft.Maui.Devices;
-
+    using Moq;
     using Nothing.Nauta.App.Data;
     using Nothing.Nauta.App.Services.Interfaces;
     using Nothing.Nauta.App.ViewModels.Components;
-
     using Xunit;
 
     public class AccountViewModelFacts
@@ -26,18 +27,18 @@
                                  {
                                      TimeSpan.FromMinutes(6),
                                      MudBlazor.Color.Success,
-                                 }; 
-                
+                                 };
+
                 yield return new object[]
                                  {
                                      TimeSpan.FromMinutes(4),
-                                     MudBlazor.Color.Warning
-                                 };   
-                
+                                     MudBlazor.Color.Warning,
+                                 };
+
                 yield return new object[]
                                  {
                                      TimeSpan.FromMinutes(0.5),
-                                     MudBlazor.Color.Error
+                                     MudBlazor.Color.Error,
                                  };
             }
 
@@ -48,7 +49,7 @@
             {
                 var sessionManagerMock = new Mock<ISessionManager>();
 
-                var accountManagementMock = new Mock<IAccountManagement>();
+                var accountManagementMock = new Mock<IAccountRepository>();
                 var deviceDisplayMock = new Mock<IDeviceDisplay>();
 
                 var accountViewModel = new AccountViewModel(new AccountInfo(), sessionManagerMock.Object, accountManagementMock.Object, deviceDisplayMock.Object);

@@ -1,4 +1,10 @@
-﻿namespace Nothing.Nauta.App.Data.Extensions;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="AccountInfoExtensions.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2023 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nothing.Nauta.App.Data.Extensions;
 
 public static class AccountInfoExtensions
 {

@@ -1,8 +1,13 @@
-﻿namespace Nothing.Nauta.App.Dialogs
-{
-    using Microsoft.AspNetCore.Components.Web;
-    using Microsoft.AspNetCore.Components;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ForceConnectionCloseConfirmDialog.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2023 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
+namespace Nothing.Nauta.App.Dialogs
+{
+    using Microsoft.AspNetCore.Components;
+    using Microsoft.AspNetCore.Components.Web;
     using MudBlazor;
 
     public partial class ForceConnectionCloseConfirmDialog

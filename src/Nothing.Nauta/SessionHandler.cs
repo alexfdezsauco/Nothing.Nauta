@@ -1,4 +1,10 @@
-﻿namespace Nothing.Nauta
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="SessionHandler.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2023 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nothing.Nauta
 {
     using System;
     using System.Collections.Generic;
@@ -34,13 +40,13 @@
             var cookieContainer = new CookieContainer();
             using var handler = new HttpClientHandler
             {
-                CookieContainer = cookieContainer
+                CookieContainer = cookieContainer,
             };
 
             using var client = new HttpClient(handler)
             {
                 BaseAddress = BaseAddress,
-                Timeout = Timeout
+                Timeout = Timeout,
             };
 
             var content = new FormUrlEncodedContent(sessionData);
@@ -56,13 +62,13 @@
             var cookieContainer = new CookieContainer();
             using var handler = new HttpClientHandler
             {
-                CookieContainer = cookieContainer
+                CookieContainer = cookieContainer,
             };
 
             using var client = new HttpClient(handler)
             {
                 BaseAddress = BaseAddress,
-                Timeout = Timeout
+                Timeout = Timeout,
             };
 
             var content = await client.GetStringAsync("/");
@@ -121,13 +127,13 @@
             var cookieContainer = new CookieContainer();
             using var handler = new HttpClientHandler
             {
-                CookieContainer = cookieContainer
+                CookieContainer = cookieContainer,
             };
 
             using var httpClient = new HttpClient(handler)
             {
                 BaseAddress = BaseAddress,
-                Timeout = Timeout
+                Timeout = Timeout,
             };
 
             var content = new FormUrlEncodedContent(sessionData);

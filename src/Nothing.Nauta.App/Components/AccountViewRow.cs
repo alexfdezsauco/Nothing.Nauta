@@ -1,4 +1,10 @@
-﻿namespace Nothing.Nauta.App.Components;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="AccountViewRow.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2023 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nothing.Nauta.App.Components;
 
 using Microsoft.AspNetCore.Components;
 

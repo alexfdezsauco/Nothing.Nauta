@@ -1,4 +1,10 @@
-﻿using MudBlazor;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="IDialogReferenceExtensions.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2023 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+using MudBlazor;
 
 public static class IDialogReferenceExtensions
 {

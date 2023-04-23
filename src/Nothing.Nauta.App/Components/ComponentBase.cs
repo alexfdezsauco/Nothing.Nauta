@@ -1,63 +1,71 @@
-﻿namespace Nothing.Nauta.App.Components;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ComponentBase.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2023 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 
-using System.ComponentModel;
-
-using Microsoft.AspNetCore.Components;
-using Nothing.Nauta.App.Components.Extensions;
-using Nothing.Nauta.App.Services.Interfaces;
-using Nothing.Nauta.App.ViewModels.Interfaces;
-
-public class ComponentBase<TViewModel> : Blorc.Components.BlorcComponentBase where TViewModel : class, IViewModel
+namespace Nothing.Nauta.App.Components
 {
-    public ComponentBase()
-    {
-        PropertyChanged += OnPropertyChanged;
-    }
+    using System.ComponentModel;
 
-    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    using Microsoft.AspNetCore.Components;
+    using Nothing.Nauta.App.Components.Extensions;
+    using Nothing.Nauta.App.Services.Interfaces;
+    using Nothing.Nauta.App.ViewModels.Interfaces;
+
+    public class ComponentBase<TViewModel> : Blorc.Components.BlorcComponentBase
+        where TViewModel : class, IViewModel
     {
-        if (e.PropertyName == nameof(ViewModel))
+        public ComponentBase()
         {
-            InvokeAsync(() => StateHasChanged());
-        }
-    }
-
-    [Inject]
-    private IViewModelFactory? ViewModelFactory { get; set; }
-
-    [Parameter]
-    public TViewModel? ViewModel
-    {
-        get => GetPropertyValue<TViewModel>(nameof(ViewModel));
-        set => SetPropertyValue(nameof(ViewModel), value);
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        await InitializeViewModelAsync();
-    }
-
-    private async Task InitializeViewModelAsync()
-    {
-        if (ViewModelFactory is null)
-        {
-            return;
+            this.PropertyChanged += this.OnPropertyChanged;
         }
 
-        if (ViewModel is null)
+        [Parameter]
+        public TViewModel? ViewModel
         {
-            ViewModel = ViewModelFactory.Create<TViewModel>();
+            get => this.GetPropertyValue<TViewModel>(nameof(this.ViewModel));
+            set => this.SetPropertyValue(nameof(this.ViewModel), value);
         }
 
-        this.MapViewToViewModelProperties();
-        ViewModel.PropertyChanged += this.OnViewModelPropertyChanged;
-        ViewModel.InvokeAsync = InvokeAsync;
+        [Inject]
+        private IViewModelFactory? ViewModelFactory { get; set; }
 
-        await ViewModel.InitializeAsync();
-    }
+        protected override async Task OnInitializedAsync()
+        {
+            await this.InitializeViewModelAsync();
+        }
 
-    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        InvokeAsync(StateHasChanged);
+        private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(this.ViewModel))
+            {
+                this.InvokeAsync(() => this.StateHasChanged());
+            }
+        }
+
+        private async Task InitializeViewModelAsync()
+        {
+            if (this.ViewModelFactory is null)
+            {
+                return;
+            }
+
+            if (this.ViewModel is null)
+            {
+                this.ViewModel = this.ViewModelFactory.Create<TViewModel>();
+            }
+
+            this.MapViewToViewModelProperties();
+            this.ViewModel.PropertyChanged += this.OnViewModelPropertyChanged;
+            this.ViewModel.InvokeAsync = this.InvokeAsync;
+
+            await this.ViewModel.InitializeAsync();
+        }
+
+        private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            this.InvokeAsync(this.StateHasChanged);
+        }
     }
 }

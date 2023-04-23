@@ -1,12 +1,18 @@
-﻿namespace Nothing.Nauta.App
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="App.xaml.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2023 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nothing.Nauta.App
 {
     public partial class App : Application
     {
         public App()
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
-            MainPage = new MainPage();
+            this.MainPage = new MainPage();
         }
     }
 }

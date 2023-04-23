@@ -1,4 +1,10 @@
-﻿namespace Nothing.Nauta.App.ViewModels.Pages;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="IndexViewModel.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2023 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nothing.Nauta.App.ViewModels.Pages;
 
 using MudBlazor;
 
@@ -12,38 +18,40 @@ using Nothing.Nauta.App.ViewModels.Components;
 
 public class IndexViewModel : ViewModelBase
 {
-    private readonly IAccountManagement _accountManagement;
-    private readonly ISessionManager _sessionManager;
-    private readonly IViewModelFactory _viewModelFactory;
-    private readonly IDeviceDisplay _deviceDisplay;
+    private readonly IAccountRepository accountRepository;
+    private readonly ISessionManager sessionManager;
+    private readonly IViewModelFactory viewModelFactory;
+    private readonly IDeviceDisplay deviceDisplay;
 
-    public IndexViewModel(IAccountManagement accountManagement, ISessionManager sessionManager, IViewModelFactory viewModelFactory, IDeviceDisplay deviceDisplay)
+    public IndexViewModel(IAccountRepository accountRepository, ISessionManager sessionManager, IViewModelFactory viewModelFactory, IDeviceDisplay deviceDisplay)
     {
-        _accountManagement = accountManagement;
-        _sessionManager = sessionManager;
-        _viewModelFactory = viewModelFactory;
-        _deviceDisplay = deviceDisplay;
+        this.accountRepository = accountRepository;
+        this.sessionManager = sessionManager;
+        this.viewModelFactory = viewModelFactory;
+        this.deviceDisplay = deviceDisplay;
+    }
+
+    public List<AccountViewModel>? Accounts
+    {
+        get => this.GetPropertyValue<List<AccountViewModel>>(nameof(this.Accounts));
+        private set => this.SetPropertyValue(nameof(this.Accounts), value);
+    }
+
+    public bool IsSessionConnected
+    {
+        get => this.GetPropertyValue<bool>(nameof(this.IsSessionConnected));
+        private set => this.SetPropertyValue(nameof(this.IsSessionConnected), value);
     }
 
     public override async Task InitializeAsync()
     {
-        _deviceDisplay.MainDisplayInfoChanged += this.OnDeviceDisplayMainDisplayInfoChanged;
-        DisplayOrientation = _deviceDisplay.MainDisplayInfo.Orientation;
+        this.deviceDisplay.MainDisplayInfoChanged += this.OnDeviceDisplayMainDisplayInfoChanged;
+        this.DisplayOrientation = this.deviceDisplay.MainDisplayInfo.Orientation;
 
-        _sessionManager.StateChanged += OnSessionManagerStateChanged;
-        IsSessionConnected = await _sessionManager.IsConnectedAsync();
+        this.sessionManager.StateChanged += this.OnSessionManagerStateChanged;
+        this.IsSessionConnected = await this.sessionManager.IsConnectedAsync();
 
-        await ReloadAsync();
-    }
-
-    private void OnDeviceDisplayMainDisplayInfoChanged(object? sender, DisplayInfoChangedEventArgs e)
-    {
-        DisplayOrientation = e.DisplayInfo.Orientation;
-    }
-  
-    private void OnSessionManagerStateChanged(object? sender, SessionManagerStateChangeEventArg e)
-    {
-        this.IsSessionConnected = e.IsConnected;
+        await this.ReloadAsync();
     }
 
     public async Task ReloadAsync()
@@ -63,13 +71,13 @@ public class IndexViewModel : ViewModelBase
             }
 
             var accounts = new List<AccountViewModel>();
-            foreach (var accountInfo in await _accountManagement.ListAsync())
+            foreach (var accountInfo in await this.accountRepository.ListAsync())
             {
-                var accountViewModel = await _viewModelFactory.CreateAsync<AccountViewModel>(accountInfo);
+                var accountViewModel = await this.viewModelFactory.CreateAsync<AccountViewModel>(accountInfo);
                 accounts.Add(accountViewModel);
             }
 
-            Accounts = accounts;
+            this.Accounts = accounts;
         }
         finally
         {
@@ -77,34 +85,32 @@ public class IndexViewModel : ViewModelBase
         }
     }
 
-    public List<AccountViewModel>? Accounts
+    private void OnDeviceDisplayMainDisplayInfoChanged(object? sender, DisplayInfoChangedEventArgs e)
     {
-        get => GetPropertyValue<List<AccountViewModel>>(nameof(Accounts));
-        private set => SetPropertyValue(nameof(Accounts), value);
+        this.DisplayOrientation = e.DisplayInfo.Orientation;
     }
 
-    public bool IsSessionConnected
+    private void OnSessionManagerStateChanged(object? sender, SessionManagerStateChangeEventArg e)
     {
-        get => GetPropertyValue<bool>(nameof(this.IsSessionConnected));
-        private set => SetPropertyValue(nameof(this.IsSessionConnected), value);
+        this.IsSessionConnected = e.IsConnected;
     }
 
     public bool IsReloading
     {
-        get => GetPropertyValue<bool>(nameof(IsReloading));
-        private set => SetPropertyValue(nameof(IsReloading), value);
+        get => this.GetPropertyValue<bool>(nameof(this.IsReloading));
+        private set => this.SetPropertyValue(nameof(this.IsReloading), value);
     }
 
     public bool IsOverlayVisible
     {
-        get => GetPropertyValue<bool>(nameof(IsOverlayVisible));
-        private set => SetPropertyValue(nameof(IsOverlayVisible), value);
+        get => this.GetPropertyValue<bool>(nameof(this.IsOverlayVisible));
+        private set => this.SetPropertyValue(nameof(this.IsOverlayVisible), value);
     }
 
     public DisplayOrientation DisplayOrientation
     {
-        get => GetPropertyValue<DisplayOrientation>(nameof(DisplayOrientation));
-        private set => SetPropertyValue(nameof(DisplayOrientation), value);
+        get => this.GetPropertyValue<DisplayOrientation>(nameof(this.DisplayOrientation));
+        private set => this.SetPropertyValue(nameof(this.DisplayOrientation), value);
     }
 
     public ISnackbar? Snackbar { get; set; }
@@ -116,14 +122,14 @@ public class IndexViewModel : ViewModelBase
         var accountInfo = new AccountInfo();
         var dialogParameters = new DialogParameters
                                    {
-                                       { nameof(DeleteConfirmDialog.AccountInfo), accountInfo }
+                                       { nameof(DeleteConfirmDialog.AccountInfo), accountInfo },
                                    };
 
-        var dialogReference = await DialogService!.ShowAsync<AddOrEditAccountDialog>(string.Empty, dialogParameters);
+        var dialogReference = await this.DialogService!.ShowAsync<AddOrEditAccountDialog>(string.Empty, dialogParameters);
         if (await dialogReference.GetReturnValueIfNotCancelledAsync<bool>())
         {
-            await _accountManagement.AddAsync(accountInfo);
-            await ReloadAsync();
+            await this.accountRepository.AddAsync(accountInfo);
+            await this.ReloadAsync();
         }
     }
 
@@ -131,37 +137,17 @@ public class IndexViewModel : ViewModelBase
     {
         if (!context.IsConnected)
         {
-            await BackgroundRunAsync(() => OpenAsync(context));
+            await this.BackgroundRunAsync(() => this.OpenAsync(context));
         }
         else
         {
-            await BackgroundRunAsync(CloseAsync, onErrorTask: ForceConnectionCloseAsync);
-        }
-    }
-
-    private async Task CloseAsync()
-    {
-        await _sessionManager.CloseAsync();
-    }
-
-    private async Task OpenAsync(AccountViewModel context)
-    {
-        await _sessionManager.OpenAsync(context.AccountInfo.GetUserName(), context.AccountInfo.Password);
-    }
-
-    private async Task ForceConnectionCloseAsync()
-    {
-        var dialogReference = await DialogService!.ShowAsync<ForceConnectionCloseConfirmDialog>(string.Empty);
-        if (await dialogReference.GetReturnValueIfNotCancelledAsync<bool>())
-        {
-            await _sessionManager.ForceCloseAsync();
-            await ReloadAsync();
+            await this.BackgroundRunAsync(this.CloseAsync, onErrorTask: this.ForceConnectionCloseAsync);
         }
     }
 
     protected Task BackgroundRunAsync(Func<Task> task, Func<Task>? onFinishTask = null, Func<Task>? onErrorTask = null)
     {
-        IsOverlayVisible = true;
+        this.IsOverlayVisible = true;
 
         _ = Task.Run(
             async () =>
@@ -177,14 +163,14 @@ public class IndexViewModel : ViewModelBase
                     }
                     finally
                     {
-                        IsOverlayVisible = false;
+                        this.IsOverlayVisible = false;
 
-                        _ = InvokeAsync?.Invoke(
+                        _ = this.InvokeAsync?.Invoke(
                             async () =>
                                 {
                                     if (exception is not null)
                                     {
-                                        Snackbar?.Add(exception.Message, Severity.Error);
+                                        this.Snackbar?.Add(exception.Message, Severity.Error);
                                         if (onErrorTask is not null)
                                         {
                                             await onErrorTask();
@@ -197,9 +183,28 @@ public class IndexViewModel : ViewModelBase
                                     }
                                 });
                     }
-                        
                 });
 
         return Task.CompletedTask;
+    }
+
+    private async Task CloseAsync()
+    {
+        await this.sessionManager.CloseAsync();
+    }
+
+    private async Task OpenAsync(AccountViewModel context)
+    {
+        await this.sessionManager.OpenAsync(context.AccountInfo.GetUserName(), context.AccountInfo.Password);
+    }
+
+    private async Task ForceConnectionCloseAsync()
+    {
+        var dialogReference = await this.DialogService!.ShowAsync<ForceConnectionCloseConfirmDialog>(string.Empty);
+        if (await dialogReference.GetReturnValueIfNotCancelledAsync<bool>())
+        {
+            await this.sessionManager.ForceCloseAsync();
+            await this.ReloadAsync();
+        }
     }
 }

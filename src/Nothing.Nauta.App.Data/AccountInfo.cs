@@ -1,4 +1,10 @@
-﻿namespace Nothing.Nauta.App.Data;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="AccountInfo.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2023 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nothing.Nauta.App.Data;
 
 public class AccountInfo
 {
@@ -10,5 +16,5 @@ public class AccountInfo
 
     public AccountType AccountType { get; set; } = AccountType.International;
 
-    //fpublic TimeSpan Rem
+    // fpublic TimeSpan Rem
 }

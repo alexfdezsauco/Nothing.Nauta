@@ -1,11 +1,17 @@
-﻿namespace Nothing.Nauta.App.Services.EventArgs;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="SessionManagerStateChangeEventArg.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2023 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nothing.Nauta.App.Services.EventArgs;
 
 public class SessionManagerStateChangeEventArg
 {
-    public bool IsConnected { get; }
-
     public SessionManagerStateChangeEventArg(bool isConnected)
     {
-        IsConnected = isConnected;
+        this.IsConnected = isConnected;
     }
+
+    public bool IsConnected { get; }
 }

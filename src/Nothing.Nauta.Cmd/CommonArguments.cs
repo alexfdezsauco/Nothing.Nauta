@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="CommonArguments.cs" company="WildGums">
-//   Copyright (c) 2008 - 2020 WildGums. All rights reserved.
+// <copyright file="CommonArguments.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2023 Stone Assemblies. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -10,8 +10,8 @@ namespace Nothing.Nauta.Cmd
     using System.CommandLine;
     using System.IO;
 
-    //internal static class CommonArguments
-    //{
+    // internal static class CommonArguments
+    // {
     //    public static Argument<FileInfo> CredentialsFile
     //    {
     //        get
@@ -25,7 +25,7 @@ namespace Nothing.Nauta.Cmd
     //        }
     //    }
 
-    //    public static Argument<FileInfo> SessionFile
+    // public static Argument<FileInfo> SessionFile
     //    {
     //        get
     //        {
@@ -36,30 +36,29 @@ namespace Nothing.Nauta.Cmd
     //        }
     //    }
 
-    //    private static string GetAppDataDirectoryPath()
+    // private static string GetAppDataDirectoryPath()
     //    {
     //        var folderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
     //        var appDataPath = Path.Combine(folderPath, "nauta-session");
 
-    //        if (!Directory.Exists(appDataPath))
+    // if (!Directory.Exists(appDataPath))
     //        {
     //            Directory.CreateDirectory(appDataPath);
     //        }
 
-    //        return appDataPath;
+    // return appDataPath;
     //    }
 
-    //    private static FileInfo GetCredentialFile()
+    // private static FileInfo GetCredentialFile()
     //    {
     //        return new FileInfo(Path.Combine(GetAppDataDirectoryPath(), "credentials.json"));
     //    }
 
-    //    private static FileInfo GetSessionFile()
+    // private static FileInfo GetSessionFile()
     //    {
     //        return new FileInfo(Path.Combine(GetAppDataDirectoryPath(), "session.json"));
     //    }
-    //}
-
+    // }
     public class FilesHelper
     {
         public static FileInfo GetCredentialFile(string alias)

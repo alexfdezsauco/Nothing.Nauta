@@ -1,4 +1,10 @@
-﻿namespace Nothing.Nauta.Cmd
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Program.Open.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2023 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nothing.Nauta.Cmd
 {
     using System;
     using System.Collections.Generic;
@@ -19,10 +25,10 @@
             var command = new Command("open", "Open Nauta session");
             command.AddOption(
                 new Option(new[] { "--alias", "-a" })
-                    {
-                        Argument = new Argument<string>("alias"),
-                        Required = false,
-                    });
+                {
+                    Argument = new Argument<string>("alias"),
+                    Required = false,
+                });
 
             command.Handler = CommandHandler.Create<string>(
                 async alias =>

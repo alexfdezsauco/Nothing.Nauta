@@ -1,0 +1,10 @@
+{
+  "settings": {
+    "documentationRules": {
+      "companyName": "Stone Assemblies",
+      "copyrightText": "Copyright © 2021 - 2023 Stone Assemblies. All rights reserved.",
+      "headerDecoration": "--------------------------------------------------------------------------------------------------------------------",
+      "xmlHeader": true
+    }
+  }
+}

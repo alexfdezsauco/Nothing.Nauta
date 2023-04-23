@@ -1,4 +1,10 @@
-﻿namespace Nothing.Nauta.Cmd
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Program.Credentials.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2023 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Nothing.Nauta.Cmd
 {
     using System;
     using System.Collections.Generic;
@@ -17,24 +23,24 @@
 
             command.AddOption(
                 new Option(new[] { "--username", "-u" })
-                    {
-                        Argument = new Argument<string>("username"), 
-                        Required = true
-                    });
+                {
+                    Argument = new Argument<string>("username"),
+                    Required = true,
+                });
 
             command.AddOption(
                 new Option(new[] { "--password", "-p" })
-                    {
-                        Argument = new Argument<string>("password"), 
-                        Required = true
-                    });
+                {
+                    Argument = new Argument<string>("password"),
+                    Required = true,
+                });
 
             command.AddOption(
                 new Option(new[] { "--alias", "-a" })
-                    {
-                        Argument = new Argument<string>("alias"), 
-                        Required = false, 
-                    });
+                {
+                    Argument = new Argument<string>("alias"),
+                    Required = false,
+                });
 
             command.Handler = CommandHandler.Create<string, string, string>(
                 async (username, password, alias) =>
@@ -42,9 +48,10 @@
                         Log.Information("Saving Nauta session credentials...");
 
                         var credentials = new Dictionary<string, string>
-                                              {
-                                                  ["username"] = username, ["password"] = password
-                                              };
+                        {
+                            ["username"] = username,
+                            ["password"] = password,
+                        };
 
                         try
                         {
