@@ -17,13 +17,15 @@ public class AccountViewModel : ViewModelBase, IDisposable
 {
     private readonly ISessionManager _sessionManager;
     private readonly IAccountManagement _accountManagement;
+    private readonly IDeviceDisplay _deviceDisplay;
     private readonly Timer _timer = new Timer(1000);
 
-    public AccountViewModel(AccountInfo accountInfo, ISessionManager sessionManager, IAccountManagement accountManagement)
+    public AccountViewModel(AccountInfo accountInfo, ISessionManager sessionManager, IAccountManagement accountManagement, IDeviceDisplay deviceDisplay)
     {
         AccountInfo = accountInfo;
         _sessionManager = sessionManager;
         _accountManagement = accountManagement;
+        _deviceDisplay = deviceDisplay;
     }
 
     private void OnTimerElapsed(object? sender, ElapsedEventArgs e)
@@ -47,9 +49,17 @@ public class AccountViewModel : ViewModelBase, IDisposable
 
     public override async Task InitializeAsync()
     {
+        _deviceDisplay.MainDisplayInfoChanged += this.OnDeviceDisplayMainDisplayInfoChanged;
+        DisplayOrientation = _deviceDisplay.MainDisplayInfo.Orientation;
+
         _timer.Elapsed += OnTimerElapsed;
         _sessionManager.StateChanged += OnSessionManagerStateChanged;
-        await UpdateConnectionStatusAsync();
+         await UpdateConnectionStatusAsync();
+    }
+
+    private void OnDeviceDisplayMainDisplayInfoChanged(object? sender, DisplayInfoChangedEventArgs e)
+    {
+        DisplayOrientation = e.DisplayInfo.Orientation;
     }
 
     private void OnSessionManagerStateChanged(object? sender, SessionManagerStateChangeEventArg e)
@@ -102,6 +112,12 @@ public class AccountViewModel : ViewModelBase, IDisposable
         private set => SetPropertyValue(nameof(TotalTime), value);
     }
 
+    public DisplayOrientation DisplayOrientation
+    {
+        get => GetPropertyValue<DisplayOrientation>(nameof(DisplayOrientation));
+        private set => SetPropertyValue(nameof(DisplayOrientation), value);
+    }
+
     public string FormattedRemainingTime => $"{(int)RemainingTime.TotalHours:D2}:{RemainingTime.Minutes:D2}:{RemainingTime.Seconds:D2}";
 
     public bool IsSwitchDisable => !IsConnected && IsSessionConnected;
@@ -131,7 +147,7 @@ public class AccountViewModel : ViewModelBase, IDisposable
                                        { nameof(AddOrEditAccountDialog.AccountInfo), accountInfo }
                                    };
 
-        var dialogReference = await DialogService.ShowAsync<AddOrEditAccountDialog>(string.Empty, dialogParameters);
+        var dialogReference = await DialogService!.ShowAsync<AddOrEditAccountDialog>(string.Empty, dialogParameters);
         if (await dialogReference.GetReturnValueIfNotCancelledAsync<bool>())
         {
             await _accountManagement.UpdateAsync(accountInfo);
@@ -146,20 +162,20 @@ public class AccountViewModel : ViewModelBase, IDisposable
                                        { nameof(DeleteConfirmDialog.AccountInfo), AccountInfo }
                                    };
 
-        var dialogReference = await DialogService.ShowAsync<DeleteConfirmDialog>(string.Empty, dialogParameters);
+        var dialogReference = await DialogService!.ShowAsync<DeleteConfirmDialog>(string.Empty, dialogParameters);
         if (await dialogReference.GetReturnValueIfNotCancelledAsync<bool>())
         {
             await _accountManagement.RemoveAsync(AccountInfo);
 
             // TODO: Improve this later.
-            await IndexViewModel.ReloadAsync();
+            await IndexViewModel!.ReloadAsync();
         }
     }
 
     public async Task CheckedChangedAsync()
     {
         // TODO: Improve this later.
-        await IndexViewModel.CheckedChangedAsync(this);
+        await IndexViewModel!.CheckedChangedAsync(this);
     }
 
     public double RemainingTimePercent

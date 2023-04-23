@@ -11,7 +11,7 @@
 
 <PageTitle>Accounts</PageTitle>
 
-<MudToolBar Style="margin-left: -10px; margin-right: -15px" >
+<MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Style="margin-top: 5px">
     @if (ViewModel.IsSessionConnected)
     {
         <MudText Typo="Typo.body1" Color="Color.Success">CONNECTED</MudText>
@@ -21,34 +21,71 @@
         <MudText Typo="Typo.body1" Color="Color.Error">DISCONNECTED</MudText>
     }
 
-    <MudSpacer/>
-    <MudIconButton Icon="@Icons.Material.Filled.Add" Size="Size.Large" OnClick="ViewModel.AddAccountAsync" Color="Color.Secondary" DisableElevation="true" />
-    <MudIconButton Icon="@Icons.Material.Filled.Refresh" Size="Size.Large" OnClick="ViewModel.ReloadAsync" Color="Color.Tertiary" DisableElevation="true" />
-</MudToolBar>
+    <MudButtonGroup Variant="Variant.Text" Size="Size.Medium">
+        <MudIconButton Icon="@Icons.Material.Filled.Add" Size="Size.Large" OnClick="ViewModel.AddAccountAsync" Color="Color.Secondary" DisableElevation="true" />
+        <MudIconButton Icon="@Icons.Material.Filled.Refresh" Size="Size.Large" OnClick="ViewModel.ReloadAsync" Color="Color.Tertiary" DisableElevation="true" />
+    </MudButtonGroup>
 
+</MudStack>
+
+@*<MudToolBar Style="margin-left: -10px; margin-right: -15px" >
+
+    <MudSpacer/>
+</MudToolBar>
+*@
 @if (ViewModel.IsReloading)
 {
     <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large" />
 }
 else if (ViewModel.Accounts?.Count > 0)
 {
-    <MudTable Items="@ViewModel.Accounts" Hover="true" LoadingProgressColor="Color.Info">
-        <HeaderContent>
-            <MudTh>User Name</MudTh>
-            <MudTh>Account Type</MudTh>
-            <MudTh Style="text-align:center">Remaining Time</MudTh>
-            <MudTh Style="text-align: center">
-                Actions
-            </MudTh>
-        </HeaderContent>
-        <RowTemplate>
+    @if (ViewModel.DisplayOrientation == DisplayOrientation.Landscape)
+    {
+        <MudTable Items="@ViewModel.Accounts" CustomHeader="true" Style="margin-top: 5px">
+            <HeaderContent>
+                <MudTh>
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.FlexStart">
+                        <MudIcon Icon="@Icons.Material.Filled.AccountCircle" Size="Size.Small"/>
+                        <MudText Typo="Typo.subtitle1"  Color="Color.Dark">User Name</MudText>
+                    </MudStack>
+                </MudTh>
+                <MudTh>
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.FlexStart">
+                        <MudIcon Icon="@Icons.Material.Filled.Domain" Size="Size.Small"/>
+                        <MudText Typo="Typo.subtitle1" Color="Color.Dark">Account Type</MudText>
+                    </MudStack>
+                </MudTh>
+                <MudTh>
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.FlexStart">
+                        <MudIcon Icon="@Icons.Material.Filled.Alarm" Size="Size.Small" />
+                        <MudText Typo="Typo.subtitle1" Color="Color.Dark">Remaining Time</MudText>
+                    </MudStack>
+                </MudTh>
+                <MudTh>
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.Center">
+                        <MudIcon Icon="@Icons.Material.Filled.PlayArrow" Size="Size.Small" />
+                        <MudText Typo="Typo.subtitle1" Color="Color.Dark">Options</MudText>
+                    </MudStack>
+                </MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <CascadingValue Value="ViewModel">
+                    <Nothing.Nauta.App.Components.AccountViewRow ViewModel="@context"/>
+                </CascadingValue>
+            </RowTemplate>
+        </MudTable>
+    }
+    else
+    {
+        <MudStack Style="margin-top: 5px">
             <CascadingValue Value="ViewModel">
-                <Nothing.Nauta.App.Components.AccountView ViewModel="@context"/>
+                @foreach (var accountViewModel in ViewModel.Accounts)
+                {
+                    <Nothing.Nauta.App.Components.AccountView ViewModel="@accountViewModel" />
+                }
             </CascadingValue>
-        </RowTemplate>
-    </MudTable>
-
-    <br/>
+        </MudStack>
+    }
 }
 else
 {

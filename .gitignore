@@ -349,3 +349,5 @@ healthchecksdb
 
 tools
 output
+src/Nothing.Nauta.Tests/coverage.opencover.xml
+src/Nothing.Nauta.Tests/TestResults.trx

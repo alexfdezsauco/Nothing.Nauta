@@ -1,0 +1,23 @@
+﻿@inherits ComponentBase<Nothing.Nauta.App.ViewModels.Components.AccountViewModel>
+
+@if (ViewModel is null)
+{
+    return;
+}
+
+<MudTd DataLabel="User Name">@ViewModel.AccountInfo.Username</MudTd>
+<MudTd DataLabel="Account Type">@ViewModel.AccountInfo.AccountType</MudTd>
+<MudTd DataLabel="Remaining Time">
+    <MudProgressLinear Style="width: 175px; height: 25px" Color="@ViewModel.RemainingTimeProgressBarColor" Size="Size.Large" Value="@ViewModel.RemainingTimePercent">
+        <MudText Typo="Typo.subtitle1" Color="Color.Dark">
+            @ViewModel.FormattedRemainingTime
+        </MudText>
+    </MudProgressLinear>
+</MudTd>
+<MudTd DataLabel="Options">
+    <MudButtonGroup Variant="Variant.Text">
+        <MudToggleIconButton Size="Size.Large" ToggledSize="Size.Large" Disabled="@ViewModel.IsSwitchDisable" Toggled="@ViewModel.IsConnected" Icon="@Icons.Material.Filled.SignalWifiOff" Color="@Color.Error" Title="Off" ToggledIcon="@Icons.Material.Filled.SignalWifiStatusbar4Bar" ToggledColor="@Color.Success" ToggledTitle="On" ToggledChanged=@(async () => await ViewModel.CheckedChangedAsync())/>
+        <MudIconButton Icon="@Icons.Material.Filled.Edit" Disabled="@ViewModel.IsEditDisable" Color="Color.Primary" Size="Size.Medium" OnClick=@(async () => await ViewModel.EditAsync())/>
+        <MudIconButton Icon="@Icons.Material.Filled.Delete" Disabled="@ViewModel.IsDeleteDisable" Color="Color.Error" Size="Size.Medium" OnClick=@(async () => await ViewModel.DeleteAsync())/>
+    </MudButtonGroup>
+</MudTd>

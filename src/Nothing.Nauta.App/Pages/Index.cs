@@ -10,10 +10,10 @@ namespace Nothing.Nauta.App.Pages
     {
         [Inject]
         [ViewToViewModel]
-        public ISnackbar Snackbar { get; set; }
+        public ISnackbar? Snackbar { get; set; }
 
         [Inject]
         [ViewToViewModel]
-        public IDialogService DialogService { get; set; }
+        public IDialogService? DialogService { get; set; }
     }
 }

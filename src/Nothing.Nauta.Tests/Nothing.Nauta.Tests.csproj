@@ -4,6 +4,10 @@
 		<UseMaui>true</UseMaui>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
+	<ItemGroup>
+	  <None Remove="coverage.opencover.xml" />
+	  <None Remove="TestResults.trx" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="AngleSharp" Version="1.0.1" />

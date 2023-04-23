@@ -33,7 +33,10 @@
             builder.Services.AddSingleton<ISessionManager, SessionManager>();
             builder.Services.AddSingleton<ISessionHandler, SessionHandler>();
             builder.Services.AddSingleton<IAccountManagement, AccountManagement>();
+
+
             builder.Services.AddSingleton(_ => SecureStorage.Default);
+            builder.Services.AddSingleton(_ => DeviceDisplay.Current);
 
             var app = builder.Build();
 

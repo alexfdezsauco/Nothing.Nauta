@@ -1,9 +1,5 @@
 ﻿namespace Nothing.Nauta.App.ViewModels.Pages;
 
-using Force.DeepCloner;
-
-using Microsoft.Maui.Controls.Internals;
-
 using MudBlazor;
 
 using Nothing.Nauta.App.Data;
@@ -19,22 +15,32 @@ public class IndexViewModel : ViewModelBase
     private readonly IAccountManagement _accountManagement;
     private readonly ISessionManager _sessionManager;
     private readonly IViewModelFactory _viewModelFactory;
+    private readonly IDeviceDisplay _deviceDisplay;
 
-    public IndexViewModel(IAccountManagement accountManagement, ISessionManager sessionManager, IViewModelFactory viewModelFactory)
+    public IndexViewModel(IAccountManagement accountManagement, ISessionManager sessionManager, IViewModelFactory viewModelFactory, IDeviceDisplay deviceDisplay)
     {
         _accountManagement = accountManagement;
         _sessionManager = sessionManager;
         _viewModelFactory = viewModelFactory;
+        _deviceDisplay = deviceDisplay;
     }
 
     public override async Task InitializeAsync()
     {
+        _deviceDisplay.MainDisplayInfoChanged += this.OnDeviceDisplayMainDisplayInfoChanged;
+        DisplayOrientation = _deviceDisplay.MainDisplayInfo.Orientation;
+
         _sessionManager.StateChanged += OnSessionManagerStateChanged;
-        this.IsSessionConnected = await _sessionManager.IsConnectedAsync();
+        IsSessionConnected = await _sessionManager.IsConnectedAsync();
 
         await ReloadAsync();
     }
 
+    private void OnDeviceDisplayMainDisplayInfoChanged(object? sender, DisplayInfoChangedEventArgs e)
+    {
+        DisplayOrientation = e.DisplayInfo.Orientation;
+    }
+  
     private void OnSessionManagerStateChanged(object? sender, SessionManagerStateChangeEventArg e)
     {
         this.IsSessionConnected = e.IsConnected;
@@ -82,6 +88,7 @@ public class IndexViewModel : ViewModelBase
         get => GetPropertyValue<bool>(nameof(this.IsSessionConnected));
         private set => SetPropertyValue(nameof(this.IsSessionConnected), value);
     }
+
     public bool IsReloading
     {
         get => GetPropertyValue<bool>(nameof(IsReloading));
@@ -94,10 +101,15 @@ public class IndexViewModel : ViewModelBase
         private set => SetPropertyValue(nameof(IsOverlayVisible), value);
     }
 
-    public ISnackbar Snackbar { get; set; }
+    public DisplayOrientation DisplayOrientation
+    {
+        get => GetPropertyValue<DisplayOrientation>(nameof(DisplayOrientation));
+        private set => SetPropertyValue(nameof(DisplayOrientation), value);
+    }
 
-    public IDialogService DialogService { get; set; }
+    public ISnackbar? Snackbar { get; set; }
 
+    public IDialogService? DialogService { get; set; }
 
     public async Task AddAccountAsync()
     {
@@ -107,7 +119,7 @@ public class IndexViewModel : ViewModelBase
                                        { nameof(DeleteConfirmDialog.AccountInfo), accountInfo }
                                    };
 
-        var dialogReference = await this.DialogService.ShowAsync<AddOrEditAccountDialog>(string.Empty, dialogParameters);
+        var dialogReference = await DialogService!.ShowAsync<AddOrEditAccountDialog>(string.Empty, dialogParameters);
         if (await dialogReference.GetReturnValueIfNotCancelledAsync<bool>())
         {
             await _accountManagement.AddAsync(accountInfo);
@@ -139,7 +151,7 @@ public class IndexViewModel : ViewModelBase
 
     private async Task ForceConnectionCloseAsync()
     {
-        var dialogReference = await this.DialogService.ShowAsync<ForceConnectionCloseConfirmDialog>(string.Empty);
+        var dialogReference = await DialogService!.ShowAsync<ForceConnectionCloseConfirmDialog>(string.Empty);
         if (await dialogReference.GetReturnValueIfNotCancelledAsync<bool>())
         {
             await _sessionManager.ForceCloseAsync();

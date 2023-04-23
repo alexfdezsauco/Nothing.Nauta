@@ -8,6 +8,8 @@
 
     using FluentAssertions;
 
+    using Microsoft.Maui.Devices;
+
     using Nothing.Nauta.App.Data;
     using Nothing.Nauta.App.Services.Interfaces;
     using Nothing.Nauta.App.ViewModels.Components;
@@ -47,7 +49,9 @@
                 var sessionManagerMock = new Mock<ISessionManager>();
 
                 var accountManagementMock = new Mock<IAccountManagement>();
-                var accountViewModel = new AccountViewModel(new AccountInfo(), sessionManagerMock.Object, accountManagementMock.Object);
+                var deviceDisplayMock = new Mock<IDeviceDisplay>();
+
+                var accountViewModel = new AccountViewModel(new AccountInfo(), sessionManagerMock.Object, accountManagementMock.Object, deviceDisplayMock.Object);
 
                 var propertyInfo = typeof(AccountViewModel).GetProperty(nameof(AccountViewModel.RemainingTime));
                 propertyInfo?.SetValue(accountViewModel, remainingTime);
