@@ -47,12 +47,12 @@ namespace Nothing.Nauta.App.Dialogs
             if (this.passwordInputType == InputType.Password)
             {
                 this.passwordInputType = InputType.Text;
-                this.passwordInputAdornmentIcon = Icons.Material.Filled.VisibilityOff;
+                this.passwordInputAdornmentIcon = Icons.Material.Filled.Visibility;
             }
             else
             {
                 this.passwordInputType = InputType.Password;
-                this.passwordInputAdornmentIcon = Icons.Material.Filled.Visibility;
+                this.passwordInputAdornmentIcon = Icons.Material.Filled.VisibilityOff;
             }
         }
     }
