@@ -12,7 +12,8 @@
         private MudForm form;
         private bool success;
         private string[] errors;
-        private InputType passwordInput = InputType.Password;
+        private InputType passwordInputType = InputType.Password;
+        private string passwordInputAdornmentIcon = Icons.Material.Filled.VisibilityOff;
 
         [Parameter]
         public AccountInfo? AccountInfo { get; set; }
@@ -35,6 +36,20 @@
             }
 
             this.MudDialog!.Close(true);
+        }
+
+        private void ToggleInput()
+        {
+            if (this.passwordInputType == InputType.Password)
+            {
+                this.passwordInputType = InputType.Text;
+                this.passwordInputAdornmentIcon = Icons.Material.Filled.VisibilityOff;
+            }
+            else
+            {
+                this.passwordInputType = InputType.Password;
+                this.passwordInputAdornmentIcon = Icons.Material.Filled.Visibility;
+            }
         }
     }
 }
