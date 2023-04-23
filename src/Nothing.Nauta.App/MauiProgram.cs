@@ -28,6 +28,8 @@
             builder.Services.AddDbContext<AppDbContext>();
 
             builder.Services.AddSingleton<IViewModelFactory, ViewModelFactory>();
+
+            builder.Services.AddSingleton<ITimeService, TimeService>();
             builder.Services.AddSingleton<ISessionManager, SessionManager>();
             builder.Services.AddSingleton<ISessionHandler, SessionHandler>();
             builder.Services.AddSingleton<IAccountManagement, AccountManagement>();

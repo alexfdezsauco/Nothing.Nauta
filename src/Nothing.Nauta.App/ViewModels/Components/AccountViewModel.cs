@@ -1,4 +1,4 @@
-﻿namespace Nothing.Nauta.App.Services;
+﻿namespace Nothing.Nauta.App.ViewModels.Components;
 
 using System.Timers;
 
@@ -28,7 +28,7 @@ public class AccountViewModel : ViewModelBase, IDisposable
 
     private void OnTimerElapsed(object? sender, ElapsedEventArgs e)
     {
-        InvokeAsync?.Invoke(
+        _ = Task.Run(
             async () =>
                 {
                     IsConnected = await _sessionManager.IsConnectedAsync(AccountInfo);
@@ -102,7 +102,7 @@ public class AccountViewModel : ViewModelBase, IDisposable
         private set => SetPropertyValue(nameof(TotalTime), value);
     }
 
-    public string FormattedRemainingTime => $"{(int) RemainingTime.TotalHours:D2}:{RemainingTime.Minutes:D2}:{RemainingTime.Seconds:D2}";
+    public string FormattedRemainingTime => $"{(int)RemainingTime.TotalHours:D2}:{RemainingTime.Minutes:D2}:{RemainingTime.Seconds:D2}";
 
     public bool IsSwitchDisable => !IsConnected && IsSessionConnected;
 
@@ -110,9 +110,9 @@ public class AccountViewModel : ViewModelBase, IDisposable
 
     public bool IsDeleteDisable => IsConnected;
 
-    public IDialogService DialogService { get; set; }
+    public IDialogService? DialogService { get; set; }
 
-    public IndexViewModel IndexViewModel { get; set; }
+    public IndexViewModel? IndexViewModel { get; set; }
 
     public void Dispose()
     {
@@ -175,14 +175,14 @@ public class AccountViewModel : ViewModelBase, IDisposable
     {
         get
         {
-            if (RemainingTime.TotalMinutes < 5)
-            {
-                return Color.Warning;
-            }
-
             if (RemainingTime.TotalMinutes < 1)
             {
                 return Color.Error;
+            }
+
+            if (RemainingTime.TotalMinutes < 5)
+            {
+                return Color.Warning;
             }
 
             return Color.Success;

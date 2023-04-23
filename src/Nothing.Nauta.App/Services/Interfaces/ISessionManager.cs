@@ -11,7 +11,7 @@ public interface ISessionManager
 
     Task<Dictionary<string, string>?> GetSessionDataAsync();
 
-    Task<(TimeSpan, TimeSpan)> GetTimeAsync();
+    Task<(TimeSpan Total, TimeSpan RemainingTime)> GetTimeAsync();
 
     Task OpenAsync(string userName, string? password);
 

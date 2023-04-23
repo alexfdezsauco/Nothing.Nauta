@@ -1,22 +1,20 @@
 namespace Nauta.Tests
 {
-    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Threading.Tasks;
 
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-
     using Newtonsoft.Json;
 
     using Nothing.Nauta;
+    using Nothing.Nauta.Tests;
 
-    [TestClass]
-    [TestCategory("Debug")]
+    using Xunit;
+
     public class SessionHandlerTests
     {
-        [TestMethod]
-        [TestCategory("Debug")]
+        [Fact]
+        [Trait(Traits.Category, Category.Development)]
         public async Task Login()
         {
             var session = new SessionHandler();
@@ -24,8 +22,8 @@ namespace Nauta.Tests
             await File.WriteAllTextAsync("session.json", JsonConvert.SerializeObject(sessionData, Formatting.Indented));
         }
 
-        [TestMethod]
-        [TestCategory("Debug")]
+        [Fact]
+        [Trait(Traits.Category, Category.Development)]
         public async Task Logout()
         {
             var content = await File.ReadAllTextAsync("session.json");
@@ -34,8 +32,8 @@ namespace Nauta.Tests
             await sessionHandler.CloseAsync(sessionData);
         }
 
-        [TestMethod]
-        [TestCategory("Debug")]
+        [Fact]
+        [Trait(Traits.Category, Category.Development)]
         public async Task Time()
         {
             var content = await File.ReadAllTextAsync("session.json");
