@@ -9,6 +9,8 @@ public interface ISessionManager
 
     Task<bool> IsConnectedAsync(AccountInfo accountInfo);
 
+    Task<bool> IsConnectedAsync();
+
     Task<Dictionary<string, string>?> GetSessionDataAsync();
 
     Task<(TimeSpan Total, TimeSpan RemainingTime)> GetTimeAsync();
@@ -18,6 +20,4 @@ public interface ISessionManager
     Task CloseAsync();
 
     Task ForceCloseAsync();
-
-    Task<bool> IsConnectedAsync();
 }

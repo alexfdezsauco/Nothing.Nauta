@@ -1,7 +1,5 @@
 ﻿namespace Nothing.Nauta.App.Services;
 
-using System.Collections.Concurrent;
-
 using Nothing.Nauta.App.Data;
 using Nothing.Nauta.App.Data.Extensions;
 using Nothing.Nauta.App.Services.Interfaces;
@@ -11,8 +9,6 @@ using Nothing.Nauta.Interfaces;
 using System;
 using System.Globalization;
 
-using Microsoft.EntityFrameworkCore.Design;
-
 using Nothing.Nauta.App.Services.EventArgs;
 
 public class SessionManager : ISessionManager
@@ -20,7 +16,6 @@ public class SessionManager : ISessionManager
     public const string NautaSessionData = "NautaSessionData";
 
     public const string StartedTimeFormat = "MM/dd/yyyy HH:mm:ss";
-
 
     private readonly ISecureStorage _secureStorage;
 
@@ -78,9 +73,12 @@ public class SessionManager : ISessionManager
     public async Task CloseAsync()
     {
         var sessionData = await GetSessionDataAsync();
-        await _sessionHandler.CloseAsync(sessionData);
-        _secureStorage.Remove(NautaSessionData);
-        OnStateChanged(new SessionManagerStateChangeEventArg(false));
+        if (sessionData is not null)
+        {
+            await _sessionHandler.CloseAsync(sessionData);
+            _secureStorage.Remove(NautaSessionData);
+            OnStateChanged(new SessionManagerStateChangeEventArg(false));
+        }
     }
 
     public Task ForceCloseAsync()
@@ -91,23 +89,23 @@ public class SessionManager : ISessionManager
         return Task.CompletedTask;
     }
 
-    public async Task<bool> IsConnectedAsync()
-    {
-        var sessionData = await GetSessionDataAsync();
-        if (sessionData?.TryGetValue(SessionDataKeys.UserName, out var currentSessionUserName) ?? false)
-        {
-            return true;
-        }
-
-        return false;
-    }
-
     public async Task<bool> IsConnectedAsync(AccountInfo accountInfo)
     {
         var sessionData = await GetSessionDataAsync();
         if (sessionData?.TryGetValue(SessionDataKeys.UserName, out var currentSessionUserName) ?? false)
         {
             return accountInfo.GetUserName() == currentSessionUserName;
+        }
+
+        return false;
+    }
+
+    public async Task<bool> IsConnectedAsync()
+    {
+        var sessionData = await GetSessionDataAsync();
+        if (sessionData?.TryGetValue(SessionDataKeys.UserName, out var currentSessionUserName) ?? false)
+        {
+            return true;
         }
 
         return false;

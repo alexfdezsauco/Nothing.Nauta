@@ -21,6 +21,43 @@
 
     public class SessionManagerFacts
     {
+        public class The_OpenAsync_Method
+        {
+            [Fact]
+            [Trait(Traits.Category, Category.Unit)]
+            public async Task Calls_SecureStorage_SetAsync_Method_With_The_Expected_Params_Async()
+            {
+                var secureStorageMock = new Mock<ISecureStorage>();
+                Dictionary<string, string> deserializedSessionData = null;
+                secureStorageMock.Setup(
+                    storage => storage.SetAsync(SessionManager.NautaSessionData, It.IsAny<string>())).Callback(
+                    (string key, string data) =>
+                        {
+                            deserializedSessionData = JsonSerializer.Deserialize<Dictionary<string, string>>(data);
+                        });
+
+                var sessionHandlerMock = new Mock<ISessionHandler>();
+                var sessionData = new Dictionary<string, string>
+                                      {
+                                          { SessionDataKeys.SessionId, Guid.NewGuid().ToString() },
+                                          { SessionDataKeys.UserName, Guid.NewGuid().ToString() },
+                                          { SessionDataKeys.Started, DateTime.Now.ToString() }
+                                      };
+
+                sessionHandlerMock.Setup(handler => handler.OpenAsync(It.IsAny<string>(), It.IsAny<string>()))
+                    .ReturnsAsync(sessionData);
+
+                var sessionManager = new SessionManager(
+                    secureStorageMock.Object,
+                    sessionHandlerMock.Object,
+                    new Mock<ITimeService>().Object);
+
+                await sessionManager.OpenAsync(Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
+
+                deserializedSessionData.Should().BeEquivalentTo(sessionData);
+            }
+        }
+
         public class The_GetTimeAsync_Method
         {
             public static IEnumerable<object[]> Data()
