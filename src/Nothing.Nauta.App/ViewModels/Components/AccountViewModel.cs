@@ -54,7 +54,7 @@ public class AccountViewModel : ViewModelBase, IDisposable
 
         _timer.Elapsed += OnTimerElapsed;
         _sessionManager.StateChanged += OnSessionManagerStateChanged;
-         await UpdateConnectionStatusAsync();
+        await UpdateConnectionStatusAsync();
     }
 
     private void OnDeviceDisplayMainDisplayInfoChanged(object? sender, DisplayInfoChangedEventArgs e)
@@ -132,10 +132,19 @@ public class AccountViewModel : ViewModelBase, IDisposable
 
     public void Dispose()
     {
-        _sessionManager.StateChanged -= OnSessionManagerStateChanged;
-        _timer.Elapsed -= OnTimerElapsed;
-        _timer.Enabled = false;
-        _timer.Dispose();
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            _sessionManager.StateChanged -= OnSessionManagerStateChanged;
+            _timer.Elapsed -= OnTimerElapsed;
+            _timer.Enabled = false;
+            _timer.Dispose();
+        }
     }
 
     public async Task EditAsync()
