@@ -119,14 +119,14 @@ Task("Test")
   {
     if (!string.IsNullOrWhiteSpace(TestProject))
     {
-      var settings = new DotNetTestSettings
+        var settings = new DotNetTestSettings
         {
-          NoWorkingDirectory = true,
-          Configuration = buildConfiguration,
-	  Filter = "TestCategory=Unit",
-          ArgumentCustomization = args => args
-            .Append("/p:CollectCoverage=true")
-            .Append("/p:CoverletOutputFormat=opencover")
+            NoWorkingDirectory = true,
+            Configuration = buildConfiguration,
+            Filter = "TestCategory=Unit",
+            ArgumentCustomization = args => args
+                .Append("/p:CollectCoverage=true")
+                .Append("/p:CoverletOutputFormat=opencover")
             // .Append("/p:ExcludeByAttribute=\"Obsolete%2GeneratedCodeAttribute\"")
         };
 
