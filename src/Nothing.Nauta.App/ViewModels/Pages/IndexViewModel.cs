@@ -43,6 +43,12 @@ public class IndexViewModel : ViewModelBase
         private set => this.SetPropertyValue(nameof(this.IsSessionConnected), value);
     }
 
+    public bool IsReloading
+    {
+        get => this.GetPropertyValue<bool>(nameof(this.IsReloading));
+        private set => this.SetPropertyValue(nameof(this.IsReloading), value);
+    }
+
     public override async Task InitializeAsync()
     {
         this.deviceDisplay.MainDisplayInfoChanged += this.OnDeviceDisplayMainDisplayInfoChanged;
@@ -93,12 +99,6 @@ public class IndexViewModel : ViewModelBase
     private void OnSessionManagerStateChanged(object? sender, SessionManagerStateChangeEventArg e)
     {
         this.IsSessionConnected = e.IsConnected;
-    }
-
-    public bool IsReloading
-    {
-        get => this.GetPropertyValue<bool>(nameof(this.IsReloading));
-        private set => this.SetPropertyValue(nameof(this.IsReloading), value);
     }
 
     public bool IsOverlayVisible

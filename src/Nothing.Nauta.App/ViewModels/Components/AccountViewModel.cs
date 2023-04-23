@@ -46,6 +46,12 @@ public class AccountViewModel : ViewModelBase, IDisposable
         private set => this.SetPropertyValue(nameof(this.IsConnected), value);
     }
 
+    public bool IsSessionConnected
+    {
+        get => this.GetPropertyValue<bool>(nameof(this.IsSessionConnected));
+        private set => this.SetPropertyValue(nameof(this.IsSessionConnected), value);
+    }
+
     public override async Task InitializeAsync()
     {
         this.deviceDisplay.MainDisplayInfoChanged += this.OnDeviceDisplayMainDisplayInfoChanged;
@@ -98,12 +104,6 @@ public class AccountViewModel : ViewModelBase, IDisposable
         {
             // ignore:
         }
-    }
-
-    public bool IsSessionConnected
-    {
-        get => this.GetPropertyValue<bool>(nameof(this.IsSessionConnected));
-        private set => this.SetPropertyValue(nameof(this.IsSessionConnected), value);
     }
 
     public TimeSpan RemainingTime
@@ -203,6 +203,12 @@ public class AccountViewModel : ViewModelBase, IDisposable
         }
     }
 
+    public async Task CheckedChangedAsync()
+    {
+        // TODO: Improve this later.
+        await this.IndexViewModel!.CheckedChangedAsync(this);
+    }
+
     protected virtual void Dispose(bool disposing)
     {
         if (disposing)
@@ -212,11 +218,5 @@ public class AccountViewModel : ViewModelBase, IDisposable
             this.timer.Enabled = false;
             this.timer.Dispose();
         }
-    }
-
-    public async Task CheckedChangedAsync()
-    {
-        // TODO: Improve this later.
-        await this.IndexViewModel!.CheckedChangedAsync(this);
     }
 }

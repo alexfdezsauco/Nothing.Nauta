@@ -17,8 +17,17 @@ namespace Nothing.Nauta.App
     using Nothing.Nauta.App.Services.Interfaces;
     using Nothing.Nauta.Interfaces;
 
+    /// <summary>
+    /// The MAUI program.
+    /// </summary>
     public static class MauiProgram
     {
+        /// <summary>
+        /// Creates maui app.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="MauiApp"/>.
+        /// </returns>
         public static MauiApp CreateMauiApp()
         {
             var builder = MauiApp.CreateBuilder();
