@@ -17,6 +17,7 @@ namespace Nothing.Nauta.App
         {
         }
 
+
         protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
     }
 }

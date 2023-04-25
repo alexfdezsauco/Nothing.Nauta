@@ -8,14 +8,19 @@ namespace Nothing.Nauta.App
 {
     using Blorc.Services;
 
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Components.Authorization;
     using Microsoft.EntityFrameworkCore;
 
     using MudBlazor.Services;
 
+    using Nothing.Nauta.App.Authorization;
     using Nothing.Nauta.App.Data;
     using Nothing.Nauta.App.Services;
     using Nothing.Nauta.App.Services.Interfaces;
     using Nothing.Nauta.Interfaces;
+
+    using Plugin.Fingerprint;
 
     /// <summary>
     /// The MAUI program.
@@ -34,6 +39,23 @@ namespace Nothing.Nauta.App
             builder.UseMauiApp<App>();
 
             builder.Services.AddBlorcCore();
+            builder.Services.AddAuthorizationCore(
+                options =>
+                    {
+                        options.AddPolicy(
+                            Policies.Fingerprint,
+                            policyBuilder =>
+                                {
+                                    policyBuilder.AddRequirements(new FingerprintAuthorizationRequirement());
+                                });
+                    });
+
+            builder.Services.AddSingleton<AuthenticationStateProvider, FingerprintAuthorizationStateProvider>();
+
+
+            builder.Services.AddScoped<IAuthorizationHandler, FingerprintAuthorizationRequirementHandler>();
+
+
             builder.Services.AddMudServices();
             builder.Services.AddMauiBlazorWebView();
 #if DEBUG
@@ -49,6 +71,7 @@ namespace Nothing.Nauta.App
             builder.Services.AddSingleton<ISessionHandler, SessionHandler>();
             builder.Services.AddSingleton<IAccountRepository, AccountRepository>();
 
+            builder.Services.AddSingleton(_ => CrossFingerprint.Current);
             builder.Services.AddSingleton(_ => SecureStorage.Default);
             builder.Services.AddSingleton(_ => DeviceDisplay.Current);
 

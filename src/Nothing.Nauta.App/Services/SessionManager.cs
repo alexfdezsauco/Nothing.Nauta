@@ -27,6 +27,12 @@ public class SessionManager : ISessionManager
 
     private readonly ITimeService timeService;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SessionManager"/> class.
+    /// </summary>
+    /// <param name="secureStorage">The secure storage.</param>
+    /// <param name="sessionHandler">The session handler.</param>
+    /// <param name="timeService">The time service.</param>
     public SessionManager(ISecureStorage secureStorage, ISessionHandler sessionHandler, ITimeService timeService)
     {
         this.secureStorage = secureStorage;
@@ -34,8 +40,10 @@ public class SessionManager : ISessionManager
         this.timeService = timeService;
     }
 
+    /// <inheritdoc />
     public event EventHandler<SessionManagerStateChangeEventArg>? StateChanged;
 
+    /// <inheritdoc />
     public async Task<Dictionary<string, string>?> GetSessionDataAsync()
     {
         Dictionary<string, string>? sessionData = null;
@@ -52,6 +60,7 @@ public class SessionManager : ISessionManager
         return sessionData;
     }
 
+    /// <inheritdoc />
     public async Task<(TimeSpan Total, TimeSpan RemainingTime)> GetTimeAsync()
     {
         var sessionData = await this.GetSessionDataAsync();
@@ -64,6 +73,7 @@ public class SessionManager : ISessionManager
         return (Total: remainingTime, RemainingTime: remainingTime.Subtract(this.timeService.Now().Subtract(startDateTime)));
     }
 
+    /// <inheritdoc />
     public async Task OpenAsync(string userName, string? password)
     {
         var sessionData = await this.sessionHandler.OpenAsync(userName, password);
@@ -74,6 +84,7 @@ public class SessionManager : ISessionManager
         }
     }
 
+    /// <inheritdoc />
     public async Task CloseAsync()
     {
         var sessionData = await this.GetSessionDataAsync();
@@ -85,14 +96,15 @@ public class SessionManager : ISessionManager
         }
     }
 
+    /// <inheritdoc />
     public Task ForceCloseAsync()
     {
         this.secureStorage.Remove(NautaSessionData);
         this.OnStateChanged(new SessionManagerStateChangeEventArg(false));
-
         return Task.CompletedTask;
     }
 
+    /// <inheritdoc />
     public async Task<bool> IsConnectedAsync(AccountInfo accountInfo)
     {
         var sessionData = await this.GetSessionDataAsync();
@@ -104,6 +116,7 @@ public class SessionManager : ISessionManager
         return false;
     }
 
+    /// <inheritdoc />
     public async Task<bool> IsConnectedAsync()
     {
         var sessionData = await this.GetSessionDataAsync();

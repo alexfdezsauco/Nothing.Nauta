@@ -16,19 +16,23 @@ using Nothing.Nauta.App.Services.Interfaces;
 using Nothing.Nauta.App.ViewModels;
 using Nothing.Nauta.App.ViewModels.Components;
 
+using Plugin.Fingerprint.Abstractions;
+
 public class IndexViewModel : ViewModelBase
 {
     private readonly IAccountRepository accountRepository;
     private readonly ISessionManager sessionManager;
     private readonly IViewModelFactory viewModelFactory;
     private readonly IDeviceDisplay deviceDisplay;
+    private readonly IFingerprint fingerprint;
 
-    public IndexViewModel(IAccountRepository accountRepository, ISessionManager sessionManager, IViewModelFactory viewModelFactory, IDeviceDisplay deviceDisplay)
+    public IndexViewModel(IAccountRepository accountRepository, ISessionManager sessionManager, IViewModelFactory viewModelFactory, IDeviceDisplay deviceDisplay, IFingerprint fingerprint)
     {
         this.accountRepository = accountRepository;
         this.sessionManager = sessionManager;
         this.viewModelFactory = viewModelFactory;
         this.deviceDisplay = deviceDisplay;
+        this.fingerprint = fingerprint;
     }
 
     public List<AccountViewModel>? Accounts

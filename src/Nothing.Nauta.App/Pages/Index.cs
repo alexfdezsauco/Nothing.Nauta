@@ -6,10 +6,14 @@
 
 namespace Nothing.Nauta.App.Pages
 {
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Components;
     using MudBlazor;
+
+    using Nothing.Nauta.App.Authorization;
     using Nothing.Nauta.App.Components.Attributes;
 
+    [Authorize(Policy = Policies.Fingerprint)]
     public partial class Index
     {
         [Inject]
