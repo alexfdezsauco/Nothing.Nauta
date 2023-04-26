@@ -94,6 +94,12 @@ public class AccountViewModel : ViewModelBase, IDisposable
     private async Task UpdateConnectionStatusAsync()
     {
         this.IsConnected = await this.sessionManager.IsConnectedAsync(this.AccountInfo);
+        if (!this.IsConnected)
+        {
+            this.TotalTime = TimeSpan.Zero;
+            this.RemainingTime = TimeSpan.Zero;
+        }
+
         this.IsSessionConnected = await this.sessionManager.IsConnectedAsync();
 
         try

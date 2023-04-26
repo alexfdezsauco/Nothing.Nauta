@@ -23,5 +23,9 @@ namespace Nothing.Nauta.App.Pages
         [Inject]
         [ViewToViewModel]
         public IDialogService? DialogService { get; set; }
+
+        [Inject]
+        [ViewToViewModel]
+        public NavigationManager? NavigationManager { get; set; }
     }
 }

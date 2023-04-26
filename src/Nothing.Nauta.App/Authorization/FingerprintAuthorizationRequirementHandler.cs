@@ -14,12 +14,14 @@ public class FingerprintAuthorizationRequirementHandler : AuthorizationHandler<F
 
     protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, FingerprintAuthorizationRequirement requirement)
     {
+        // Required to display devices authentication request controls (fingerprint)
         context.Succeed(requirement);
+
         if (await this.fingerprint.IsAvailableAsync())
         {
-            var authenticationRequestConfiguration = new AuthenticationRequestConfiguration("Nauta Session", "Use your fingerprint");
-            var fingerprintAuthenticationResult = await this.fingerprint.AuthenticateAsync(authenticationRequestConfiguration);
-            if (!fingerprintAuthenticationResult.Authenticated)
+            var authenticationRequestConfiguration = new AuthenticationRequestConfiguration("Nauta Session", "Please unlock with your fingerprint to proceed");
+            var authenticationResult = await this.fingerprint.AuthenticateAsync(authenticationRequestConfiguration);
+            if (!authenticationResult.Authenticated)
             {
                 context.Fail();
             }

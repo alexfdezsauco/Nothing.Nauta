@@ -6,11 +6,14 @@
 
 namespace Nothing.Nauta.App
 {
+    using System.Diagnostics;
+
     using Blorc.Services;
 
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Components.Authorization;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.Maui.LifecycleEvents;
 
     using MudBlazor.Services;
 
@@ -21,6 +24,8 @@ namespace Nothing.Nauta.App
     using Nothing.Nauta.Interfaces;
 
     using Plugin.Fingerprint;
+
+    using Microsoft.Maui.LifecycleEvents;
 
     /// <summary>
     /// The MAUI program.
@@ -35,8 +40,23 @@ namespace Nothing.Nauta.App
         /// </returns>
         public static MauiApp CreateMauiApp()
         {
+            MauiApp? app = null;
+
             var builder = MauiApp.CreateBuilder();
-            builder.UseMauiApp<App>();
+            builder.UseMauiApp<App>().ConfigureLifecycleEvents(
+                events =>
+                    {
+#if ANDROID
+                        events.AddAndroid(android => android.OnStart(activity =>
+                            {
+                                if (app is not null)
+                                {
+                                    var authenticationService = app.Services.GetRequiredService<IAuthenticationService>();
+                                    authenticationService.ExpireSession();
+                                }
+                            }));
+#endif
+                    });
 
             builder.Services.AddBlorcCore();
             builder.Services.AddAuthorizationCore(
@@ -51,10 +71,8 @@ namespace Nothing.Nauta.App
                     });
 
             builder.Services.AddSingleton<AuthenticationStateProvider, FingerprintAuthorizationStateProvider>();
-
-
             builder.Services.AddScoped<IAuthorizationHandler, FingerprintAuthorizationRequirementHandler>();
-
+            builder.Services.AddSingleton<IAuthenticationService, AuthenticationService>();
 
             builder.Services.AddMudServices();
             builder.Services.AddMauiBlazorWebView();
@@ -75,7 +93,7 @@ namespace Nothing.Nauta.App
             builder.Services.AddSingleton(_ => SecureStorage.Default);
             builder.Services.AddSingleton(_ => DeviceDisplay.Current);
 
-            var app = builder.Build();
+            app = builder.Build();
 
             var serviceScope = app.Services.CreateScope();
             var appDbContext = serviceScope.ServiceProvider.GetRequiredService<AppDbContext>();
