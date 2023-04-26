@@ -1,12 +1,29 @@
-﻿@using AddProfile = Nothing.Nauta.App.Shared.MainLayout
-<Router AppAssembly="@typeof(Main).Assembly">
-	<Found Context="routeData">
-		<RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
-        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
-	</Found>
-	<NotFound>
-		<LayoutView Layout="@typeof(MainLayout)">
-			<p role="alert">Sorry, there's nothing at this address.</p>
-		</LayoutView>
-	</NotFound>
-</Router>
+﻿
+<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(Main).Assembly">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                <Authorizing>
+                    <MudPaper Class="d-flex align-content-center justify-center flex-wrap flex-grow-1 gap-4" Height="800px" Width="100%" Elevation="0">
+                        <MudIcon Icon="@Icons.Material.Filled.Lock" Size="Size.Large" Color="Color.Primary"/>
+                    </MudPaper>
+                </Authorizing>
+                <NotAuthorized>
+                    <MudPaper Class="d-flex align-content-center justify-center flex-wrap flex-grow-1 gap-4 border-dashed" Height="800px" Width="100%" Elevation="0">
+                        <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
+                            <MudText Color="Color.Primary" Typo="Typo.h5">Nauta Session locked.</MudText>
+                            <MudButton Color="Color.Primary" StartIcon="@Icons.Material.Filled.Lock" Size="Size.Large" OnClick="OnUnlockButtonClick">Unlock</MudButton>
+                        </MudStack>
+                    </MudPaper>
+                </NotAuthorized>
+            </AuthorizeRouteView>
+            <FocusOnNavigate RouteData="@routeData" Selector="h1"/>
+        </Found>
+        <NotFound>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <p role="alert">Sorry, there's nothing at this address.</p>
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingAuthenticationState>
+

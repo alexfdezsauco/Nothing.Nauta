@@ -6,8 +6,10 @@
 
 namespace Nothing.Nauta.App.ViewModels.Pages;
 
-using MudBlazor;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components;
 
+using MudBlazor;
 using Nothing.Nauta.App.Data;
 using Nothing.Nauta.App.Data.Extensions;
 using Nothing.Nauta.App.Dialogs;
@@ -16,6 +18,9 @@ using Nothing.Nauta.App.Services.Interfaces;
 using Nothing.Nauta.App.ViewModels;
 using Nothing.Nauta.App.ViewModels.Components;
 
+/// <summary>
+/// The index view model.
+/// </summary>
 public class IndexViewModel : ViewModelBase
 {
     private readonly IAccountRepository accountRepository;
@@ -23,12 +28,31 @@ public class IndexViewModel : ViewModelBase
     private readonly IViewModelFactory viewModelFactory;
     private readonly IDeviceDisplay deviceDisplay;
 
-    public IndexViewModel(IAccountRepository accountRepository, ISessionManager sessionManager, IViewModelFactory viewModelFactory, IDeviceDisplay deviceDisplay)
+    private readonly IAuthenticationService authenticationService;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IndexViewModel"/> class.
+    /// </summary>
+    /// <param name="accountRepository">
+    /// The account repository.
+    /// </param>
+    /// <param name="sessionManager">
+    /// The session manager.
+    /// </param>
+    /// <param name="viewModelFactory">
+    /// The viewmodel factory.
+    /// </param>
+    /// <param name="deviceDisplay">
+    /// The device display.
+    /// </param>
+    public IndexViewModel(IAccountRepository accountRepository, ISessionManager sessionManager, IViewModelFactory viewModelFactory, IDeviceDisplay deviceDisplay, IAuthenticationService authenticationService)
     {
         this.accountRepository = accountRepository;
         this.sessionManager = sessionManager;
         this.viewModelFactory = viewModelFactory;
         this.deviceDisplay = deviceDisplay;
+        this.authenticationService = authenticationService;
+        this.NavigationManager = this.NavigationManager;
     }
 
     public List<AccountViewModel>? Accounts
@@ -51,6 +75,8 @@ public class IndexViewModel : ViewModelBase
 
     public override async Task InitializeAsync()
     {
+        this.authenticationService.SessionExpired += this.OnAuthenticationServiceSessionExpired;
+
         this.deviceDisplay.MainDisplayInfoChanged += this.OnDeviceDisplayMainDisplayInfoChanged;
         this.DisplayOrientation = this.deviceDisplay.MainDisplayInfo.Orientation;
 
@@ -58,6 +84,11 @@ public class IndexViewModel : ViewModelBase
         this.IsSessionConnected = await this.sessionManager.IsConnectedAsync();
 
         await this.ReloadAsync();
+    }
+
+    private void OnAuthenticationServiceSessionExpired(object? sender, EventArgs e)
+    {
+        this.NavigationManager?.NavigateTo("/");
     }
 
     public async Task ReloadAsync()
@@ -116,6 +147,8 @@ public class IndexViewModel : ViewModelBase
     public ISnackbar? Snackbar { get; set; }
 
     public IDialogService? DialogService { get; set; }
+
+    public NavigationManager? NavigationManager { get; set; }
 
     public async Task AddAccountAsync()
     {
