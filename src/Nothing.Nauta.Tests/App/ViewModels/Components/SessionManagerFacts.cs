@@ -13,6 +13,7 @@ namespace Nothing.Nauta.Tests.App.Services
     using Microsoft.Maui.Devices;
     using Moq;
     using Nothing.Nauta.App.Data;
+    using Nothing.Nauta.App.Data.Services.Interfaces;
     using Nothing.Nauta.App.Services.Interfaces;
     using Nothing.Nauta.App.ViewModels.Components;
     using Xunit;

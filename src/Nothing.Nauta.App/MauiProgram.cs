@@ -26,6 +26,8 @@ namespace Nothing.Nauta.App
     using Plugin.Fingerprint;
 
     using Microsoft.Maui.LifecycleEvents;
+    using Nothing.Nauta.App.Data.Services.Interfaces;
+    using Nothing.Nauta.App.Data.Services;
 
     /// <summary>
     /// The MAUI program.

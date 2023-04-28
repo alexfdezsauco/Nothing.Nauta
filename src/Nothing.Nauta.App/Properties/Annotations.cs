@@ -1017,14 +1017,14 @@ public sealed class LanguageInjectionAttribute : Attribute
         this.InjectedLanguage = injectedLanguage;
     }
 
-    /// <summary>Specify a language of injected code fragment.</summary>
+    /// <summary>Gets or set a language of injected code fragment.</summary>
     public InjectedLanguage InjectedLanguage { get; }
 
-    /// <summary>Specify a string that "precedes" injected string literal.</summary>
+    /// <summary>Gets or set  a string that "precedes" injected string literal.</summary>
     [CanBeNull]
     public string Prefix { get; set; }
 
-    /// <summary>Specify a string that "follows" injected string literal.</summary>
+    /// <summary>Gets or set a string that "follows" injected string literal.</summary>
     [CanBeNull]
     public string Suffix { get; set; }
 }
