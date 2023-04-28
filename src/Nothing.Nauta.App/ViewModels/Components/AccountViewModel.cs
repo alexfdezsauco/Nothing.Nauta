@@ -29,9 +29,16 @@ public class AccountViewModel : ViewModelBase, IDisposable
     public AccountViewModel(AccountInfo accountInfo, ISessionManager sessionManager, IAccountRepository accountRepository, IDeviceDisplay deviceDisplay)
     {
         this.AccountInfo = accountInfo;
+
         this.sessionManager = sessionManager;
+        this.sessionManager.StateChanged += this.OnSessionManagerStateChanged;
         this.accountRepository = accountRepository;
+
         this.deviceDisplay = deviceDisplay;
+        this.deviceDisplay.MainDisplayInfoChanged += this.OnDeviceDisplayMainDisplayInfoChanged;
+        this.DisplayOrientation = this.deviceDisplay.MainDisplayInfo.Orientation;
+
+        this.timer.Elapsed += this.OnTimerElapsed;
     }
 
     public AccountInfo AccountInfo
@@ -54,12 +61,8 @@ public class AccountViewModel : ViewModelBase, IDisposable
 
     public override async Task InitializeAsync()
     {
-        this.deviceDisplay.MainDisplayInfoChanged += this.OnDeviceDisplayMainDisplayInfoChanged;
-        this.DisplayOrientation = this.deviceDisplay.MainDisplayInfo.Orientation;
-
-        this.timer.Elapsed += this.OnTimerElapsed;
-        this.sessionManager.StateChanged += this.OnSessionManagerStateChanged;
-        await this.UpdateConnectionStatusAsync();
+        var isConnected = await this.sessionManager.IsConnectedAsync();
+        await this.UpdateConnectionStatusAsync(isConnected);
     }
 
     private void OnTimerElapsed(object? sender, ElapsedEventArgs e)
@@ -67,16 +70,22 @@ public class AccountViewModel : ViewModelBase, IDisposable
         _ = Task.Run(
             async () =>
                 {
-                    this.IsConnected = await this.sessionManager.IsConnectedAsync(this.AccountInfo);
                     if (!this.IsConnected)
                     {
                         this.timer.Enabled = false;
                     }
                     else
                     {
-                        var (total, remainingTime) = await this.sessionManager.GetTimeAsync();
-                        this.TotalTime = total;
-                        this.RemainingTime = remainingTime;
+                        try
+                        {
+                            var (total, remainingTime) = await this.sessionManager.GetTimeAsync();
+                            this.TotalTime = total;
+                            this.RemainingTime = remainingTime;
+                        }
+                        catch
+                        {
+                            // Ignored
+                        }
                     }
                 });
     }
@@ -88,19 +97,19 @@ public class AccountViewModel : ViewModelBase, IDisposable
 
     private void OnSessionManagerStateChanged(object? sender, SessionManagerStateChangeEventArg e)
     {
-        this.InvokeAsync?.Invoke(async () => await this.UpdateConnectionStatusAsync());
+        this.InvokeAsync?.Invoke(async () => await this.UpdateConnectionStatusAsync(e.IsConnected));
     }
 
-    private async Task UpdateConnectionStatusAsync()
+    private async Task UpdateConnectionStatusAsync(bool isConnected)
     {
-        this.IsConnected = await this.sessionManager.IsConnectedAsync(this.AccountInfo);
+        this.IsSessionConnected = isConnected;
+        this.IsConnected = isConnected && await this.sessionManager.IsConnectedAsync(this.AccountInfo);
+
         if (!this.IsConnected)
         {
             this.TotalTime = TimeSpan.Zero;
             this.RemainingTime = TimeSpan.Zero;
         }
-
-        this.IsSessionConnected = await this.sessionManager.IsConnectedAsync();
 
         try
         {
@@ -108,7 +117,7 @@ public class AccountViewModel : ViewModelBase, IDisposable
         }
         catch (ObjectDisposedException)
         {
-            // ignore:
+            // Ignore
         }
     }
 
@@ -146,8 +155,15 @@ public class AccountViewModel : ViewModelBase, IDisposable
     {
         get
         {
-            var remainingTimePercent = 100d * (this.RemainingTime.TotalHours / this.TotalTime.TotalHours);
-            return double.IsNaN(remainingTimePercent) ? 0 : remainingTimePercent;
+            try
+            {
+                var remainingTimePercent = 100d * (this.RemainingTime.TotalHours / this.TotalTime.TotalHours);
+                return double.IsNaN(remainingTimePercent) ? 0 : remainingTimePercent;
+            }
+            catch
+            {
+                return 0;
+            }
         }
     }
 
@@ -220,6 +236,7 @@ public class AccountViewModel : ViewModelBase, IDisposable
         if (disposing)
         {
             this.sessionManager.StateChanged -= this.OnSessionManagerStateChanged;
+            this.deviceDisplay.MainDisplayInfoChanged -= this.OnDeviceDisplayMainDisplayInfoChanged;
             this.timer.Elapsed -= this.OnTimerElapsed;
             this.timer.Enabled = false;
             this.timer.Dispose();
