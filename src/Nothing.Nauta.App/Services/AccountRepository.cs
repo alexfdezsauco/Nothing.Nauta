@@ -55,6 +55,6 @@ public class AccountRepository : IAccountRepository
 
     public async Task<List<AccountInfo>> ListAsync()
     {
-        return await this.appDbContext.Accounts!.ToListAsync();
+        return await this.appDbContext.Accounts!.ToListAsync().ConfigureAwait(false);
     }
 }
