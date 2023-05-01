@@ -25,7 +25,7 @@ using Nothing.Nauta.App.ViewModels.Pages;
 /// <summary>
 /// The account view model class.
 /// </summary>
-public sealed class AccountViewModel : ViewModelBase, IDisposable
+public class AccountViewModel : ViewModelBase, IDisposable
 {
     private readonly ISessionManager sessionManager;
     private readonly IAccountRepository accountRepository;
@@ -89,7 +89,16 @@ public sealed class AccountViewModel : ViewModelBase, IDisposable
     /// </summary>
     public TimeSpan RemainingTime
     {
-        get => this.GetPropertyValue<TimeSpan>(nameof(this.RemainingTime));
+        get
+        {
+            if (!this.IsConnected)
+            {
+                return TimeSpan.Zero;
+            }
+
+            return this.GetPropertyValue<TimeSpan>(nameof(this.RemainingTime));
+        }
+
         private set => this.SetPropertyValue(nameof(this.RemainingTime), value);
     }
 
@@ -98,7 +107,16 @@ public sealed class AccountViewModel : ViewModelBase, IDisposable
     /// </summary>
     public TimeSpan TotalTime
     {
-        get => this.GetPropertyValue<TimeSpan>(nameof(this.TotalTime));
+        get
+        {
+            if (!this.IsConnected)
+            {
+                return TimeSpan.Zero;
+            }
+
+            return this.GetPropertyValue<TimeSpan>(nameof(this.TotalTime));
+        }
+
         private set => this.SetPropertyValue(nameof(this.TotalTime), value);
     }
 
@@ -148,6 +166,11 @@ public sealed class AccountViewModel : ViewModelBase, IDisposable
     {
         get
         {
+            if (!this.IsConnected)
+            {
+                return 0;
+            }
+
             try
             {
                 var remainingTimePercent = 100d * (this.RemainingTime.TotalHours / this.TotalTime.TotalHours);
@@ -322,12 +345,6 @@ public sealed class AccountViewModel : ViewModelBase, IDisposable
     {
         this.IsSessionConnected = isConnected;
         this.IsConnected = isConnected && await this.sessionManager.IsConnectedAsync(this.AccountInfo);
-
-        if (!this.IsConnected)
-        {
-            this.TotalTime = TimeSpan.Zero;
-            this.RemainingTime = TimeSpan.Zero;
-        }
 
         try
         {
