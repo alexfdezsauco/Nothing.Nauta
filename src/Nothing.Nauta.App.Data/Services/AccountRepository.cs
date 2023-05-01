@@ -33,7 +33,7 @@ public class AccountRepository : IAccountRepository
     public async Task AddAsync(AccountInfo accountInfo)
     {
         await this.appDbContext.AddAsync(accountInfo);
-        await this.appDbContext.SaveChangesAsync();
+        await this.appDbContext.SaveChangesAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc/>
@@ -46,14 +46,20 @@ public class AccountRepository : IAccountRepository
         }
 
         this.appDbContext.Entry(accountInfo).State = EntityState.Modified;
-        await this.appDbContext.SaveChangesAsync();
+        await this.appDbContext.SaveChangesAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc/>
     public async Task RemoveAsync(AccountInfo accountInfo)
     {
         this.appDbContext.Remove(accountInfo);
-        await this.appDbContext.SaveChangesAsync();
+        await this.appDbContext.SaveChangesAsync().ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<AccountInfo> GetAsync(string username, AccountType accountType)
+    {
+        return await this.appDbContext.Accounts!.FirstAsync(info => info.Username == username && info.AccountType == accountType).ConfigureAwait(false);
     }
 
     /// <inheritdoc/>

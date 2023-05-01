@@ -53,4 +53,12 @@ public interface IAccountRepository
     /// A <see cref="Task"/>.
     /// </returns>
     Task RemoveAsync(AccountInfo accountInfo);
+
+    /// <summary>
+    /// Gets user by Username and account type.
+    /// </summary>
+    /// <param name="username">The username.</param>
+    /// <param name="accountType">The account type.</param>
+    /// <returns>A Task{AccountInfo}.</returns>
+    Task<AccountInfo> GetAsync(string username, AccountType accountType);
 }

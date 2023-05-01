@@ -26,9 +26,6 @@ namespace Nothing.Nauta.App.ViewModels.Pages
         private readonly IAccountRepository accountRepository;
         private readonly ISessionManager sessionManager;
         private readonly IViewModelFactory viewModelFactory;
-        private readonly IDeviceDisplay deviceDisplay;
-
-        private readonly IAuthenticationService authenticationService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="IndexViewModel"/> class.
@@ -57,12 +54,10 @@ namespace Nothing.Nauta.App.ViewModels.Pages
 
             this.viewModelFactory = viewModelFactory;
 
-            this.deviceDisplay = deviceDisplay;
-            this.DisplayOrientation = this.deviceDisplay.MainDisplayInfo.Orientation;
-            this.deviceDisplay.MainDisplayInfoChanged += this.OnDeviceDisplayMainDisplayInfoChanged;
+            this.DisplayOrientation = deviceDisplay.MainDisplayInfo.Orientation;
+            deviceDisplay.MainDisplayInfoChanged += this.OnDeviceDisplayMainDisplayInfoChanged;
 
-            this.authenticationService = authenticationService;
-            this.authenticationService.SessionExpired += this.OnAuthenticationServiceSessionExpired;
+            authenticationService.SessionExpired += this.OnAuthenticationServiceSessionExpired;
         }
 
         public List<AccountViewModel>? Accounts
@@ -171,7 +166,7 @@ namespace Nothing.Nauta.App.ViewModels.Pages
             }
         }
 
-        public async Task CheckedChangedAsync(AccountViewModel context)
+        public async Task ToggleConnectionStatusAsync(AccountViewModel context)
         {
             if (!context.IsConnected)
             {

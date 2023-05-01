@@ -16,5 +16,7 @@ public class AccountInfo
 
     public AccountType AccountType { get; set; } = AccountType.International;
 
-    // fpublic TimeSpan Rem
+    public TimeSpan RemainingTime { get; set; }
+
+    public DateTime ResetDateTime { get; set; }
 }

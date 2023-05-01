@@ -13,6 +13,9 @@ namespace Nothing.Nauta.Tests.App.Services
     using FluentAssertions;
     using Microsoft.Maui.Storage;
     using Moq;
+
+    using Nothing.Nauta.App.Data;
+    using Nothing.Nauta.App.Data.Services.Interfaces;
     using Nothing.Nauta.App.Services;
     using Nothing.Nauta.App.Services.Interfaces;
     using Nothing.Nauta.Interfaces;
@@ -39,17 +42,28 @@ namespace Nothing.Nauta.Tests.App.Services
                 var sessionData = new Dictionary<string, string>
                                       {
                                           { SessionDataKeys.SessionId, Guid.NewGuid().ToString() },
-                                          { SessionDataKeys.UserName, Guid.NewGuid().ToString() },
+                                          { SessionDataKeys.UserName, "jane.doe@nauta.co.cu" },
                                           { SessionDataKeys.Started, DateTime.Now.ToString() },
                                       };
 
                 sessionHandlerMock.Setup(handler => handler.OpenAsync(It.IsAny<string>(), It.IsAny<string>()))
                     .ReturnsAsync(sessionData);
 
+                var accountRepositoryMock = new Mock<IAccountRepository>();
+                accountRepositoryMock
+                    .Setup(repository => repository.GetAsync(It.IsAny<string>(), It.IsAny<AccountType>())).ReturnsAsync(
+                        (string username, AccountType accountType) =>
+                            new AccountInfo
+                                {
+                                    Username = username,
+                                    AccountType = accountType,
+                                });
+
                 var sessionManager = new SessionManager(
                     secureStorageMock.Object,
                     sessionHandlerMock.Object,
-                    new Mock<ITimeService>().Object);
+                    new Mock<ITimeService>().Object,
+                    accountRepositoryMock.Object);
 
                 await sessionManager.OpenAsync(Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
 
@@ -66,6 +80,7 @@ namespace Nothing.Nauta.Tests.App.Services
                 yield return new object[]
                                  {
                                      GetSerializedSessionData(sessionStartedTime),
+                                     sessionStartedTime,
                                      sessionStartedTime.Add(TimeSpan.FromMinutes(2)),
                                      TimeSpan.FromMinutes(3), TimeSpan.FromMinutes(1),
                                  };
@@ -73,6 +88,7 @@ namespace Nothing.Nauta.Tests.App.Services
                 yield return new object[]
                                  {
                                      GetSerializedSessionData(sessionStartedTime),
+                                     sessionStartedTime,
                                      sessionStartedTime.Add(TimeSpan.FromMinutes(1)),
                                      TimeSpan.FromMinutes(3), TimeSpan.FromMinutes(2),
                                  };
@@ -80,6 +96,7 @@ namespace Nothing.Nauta.Tests.App.Services
                 yield return new object[]
                                  {
                                      GetSerializedSessionData(sessionStartedTime),
+                                     sessionStartedTime,
                                      sessionStartedTime.Add(TimeSpan.FromMinutes(1.5)),
                                      TimeSpan.FromMinutes(3), TimeSpan.FromMinutes(1.5),
                                  };
@@ -88,7 +105,7 @@ namespace Nothing.Nauta.Tests.App.Services
             [Theory]
             [MemberData(nameof(Data))]
             [Trait(Traits.Category, Category.Unit)]
-            public async Task Returns_ExpectedValues_Async(string serializedSessionData, DateTime now, TimeSpan expectedTotal, TimeSpan expectedRemainingTime)
+            public async Task Returns_ExpectedValues_Async(string serializedSessionData, DateTime sessionStartedTime, DateTime now, TimeSpan expectedTotal, TimeSpan expectedRemainingTime)
             {
                 var secureStorageMock = new Mock<ISecureStorage>();
                 secureStorageMock.Setup(s => s.GetAsync(SessionManager.NautaSessionData)).ReturnsAsync(serializedSessionData);
@@ -100,7 +117,18 @@ namespace Nothing.Nauta.Tests.App.Services
                 var timeServiceMock = new Mock<ITimeService>();
                 timeServiceMock.Setup(service => service.Now()).Returns(now);
 
-                var sessionManager = new SessionManager(secureStorageMock.Object, sessionHandlerMock.Object, timeServiceMock.Object);
+                var accountRepositoryMock = new Mock<IAccountRepository>();
+                accountRepositoryMock
+                    .Setup(repository => repository.GetAsync(It.IsAny<string>(), It.IsAny<AccountType>())).ReturnsAsync(
+                        (string username, AccountType accountType) =>
+                            new AccountInfo
+                                {
+                                    Username = username, 
+                                    AccountType = accountType,
+                                    ResetDateTime = sessionStartedTime,
+                                    RemainingTime = expectedTotal,
+                            });
+                var sessionManager = new SessionManager(secureStorageMock.Object, sessionHandlerMock.Object, timeServiceMock.Object, accountRepositoryMock.Object);
                 var (total, remainingTime) = await sessionManager.GetTimeAsync();
 
                 total.Should().Be(expectedTotal);
@@ -112,6 +140,7 @@ namespace Nothing.Nauta.Tests.App.Services
                 return JsonSerializer.Serialize(
                     new Dictionary<string, string>
                         {
+                            { SessionDataKeys.UserName, "jane.doe@nauta.com.cu" },
                             { SessionDataKeys.Started, started.ToString(SessionManager.StartedTimeFormat) },
                         });
             }

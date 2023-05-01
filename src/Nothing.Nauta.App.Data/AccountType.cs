@@ -11,4 +11,6 @@ public enum AccountType
     National,
 
     International,
+
+    None
 }
