@@ -18,6 +18,8 @@ namespace Nothing.Nauta.App.ViewModels.Pages
     using Nothing.Nauta.App.ViewModels;
     using Nothing.Nauta.App.ViewModels.Components;
 
+    using Polly;
+
     /// <summary>
     /// The index view model.
     /// </summary>
@@ -116,6 +118,10 @@ namespace Nothing.Nauta.App.ViewModels.Pages
 
                 this.Accounts = accounts;
             }
+            catch (Exception ex)
+            {
+                this.Snackbar!.Add(ex.Message, Severity.Error);
+            }
             finally
             {
                 this.IsReloading = false;
@@ -203,7 +209,7 @@ namespace Nothing.Nauta.App.ViewModels.Pages
                                     {
                                         if (exception is not null)
                                         {
-                                            this.Snackbar?.Add(exception.Message, Severity.Error);
+                                            this.Snackbar?.Add($"{exception.Message}.", Severity.Error);
                                             if (onErrorTask is not null)
                                             {
                                                 await onErrorTask();
@@ -223,12 +229,40 @@ namespace Nothing.Nauta.App.ViewModels.Pages
 
         private async Task CloseAsync()
         {
-            await this.sessionManager.CloseAsync();
+            var retryPolicy = Policy
+                .Handle<Exception>()
+                .WaitAndRetryAsync(
+                    new[]
+                        {
+                            TimeSpan.FromSeconds(1),
+                            TimeSpan.FromSeconds(2),
+                            TimeSpan.FromSeconds(3),
+                        },
+                    (exception, sleepDuration, retryCount, _) =>
+                        {
+                            this.Snackbar!.Add($"{exception.Message}. Will retry in {sleepDuration.TotalSeconds} seconds. Attempt {retryCount}/3.", Severity.Warning);
+                        });
+
+            await retryPolicy.ExecuteAsync(() => this.sessionManager.CloseAsync());
         }
 
         private async Task OpenAsync(AccountViewModel context)
         {
-            await this.sessionManager.OpenAsync(context.AccountInfo.GetUserName(), context.AccountInfo.Password);
+            var retryPolicy = Policy
+                .Handle<Exception>()
+                .WaitAndRetryAsync(
+                new[]
+                    {
+                        TimeSpan.FromSeconds(1),
+                        TimeSpan.FromSeconds(2),
+                        TimeSpan.FromSeconds(3),
+                    },
+                (exception, sleepDuration, retryCount, _) =>
+                    {
+                        this.Snackbar!.Add($"{exception.Message}. Will retry in {sleepDuration.TotalSeconds} seconds. Attempt {retryCount}/3.", Severity.Warning);
+                    });
+
+            await retryPolicy.ExecuteAsync(() => this.sessionManager.OpenAsync(context.AccountInfo.GetUserName(), context.AccountInfo.Password));
         }
 
         private async Task ForceConnectionCloseAsync()

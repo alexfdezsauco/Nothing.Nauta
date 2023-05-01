@@ -28,6 +28,7 @@ namespace Nothing.Nauta.App
     using Microsoft.Maui.LifecycleEvents;
     using Nothing.Nauta.App.Data.Services.Interfaces;
     using Nothing.Nauta.App.Data.Services;
+    using MudBlazor;
 
     /// <summary>
     /// The MAUI program.
@@ -76,7 +77,16 @@ namespace Nothing.Nauta.App
             builder.Services.AddScoped<IAuthorizationHandler, FingerprintAuthorizationRequirementHandler>();
             builder.Services.AddSingleton<IAuthenticationService, AuthenticationService>();
 
-            builder.Services.AddMudServices();
+            builder.Services.AddMudServices(
+                configuration =>
+                    {
+                        configuration.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.TopCenter;
+                        configuration.SnackbarConfiguration.PreventDuplicates = false;
+                        configuration.SnackbarConfiguration.NewestOnTop = false;
+                        configuration.SnackbarConfiguration.ShowCloseIcon = true;
+                        configuration.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
+                    });
+
             builder.Services.AddMauiBlazorWebView();
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();

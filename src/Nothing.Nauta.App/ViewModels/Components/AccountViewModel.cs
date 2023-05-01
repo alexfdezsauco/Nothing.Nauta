@@ -30,6 +30,8 @@ public class AccountViewModel : ViewModelBase, IDisposable
     private readonly IDeviceDisplay deviceDisplay;
     private readonly Timer timer = new Timer(1000);
 
+    private bool isInitialized;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="AccountViewModel"/> class.
     /// </summary>
@@ -50,6 +52,7 @@ public class AccountViewModel : ViewModelBase, IDisposable
         this.DisplayOrientation = this.deviceDisplay.MainDisplayInfo.Orientation;
 
         this.timer.Elapsed += this.OnTimerElapsed;
+        this.isInitialized = false;
     }
 
     /// <summary>
@@ -114,17 +117,17 @@ public class AccountViewModel : ViewModelBase, IDisposable
     /// <summary>
     /// Gets a value indicating whether the switch is disabled.
     /// </summary>
-    public bool IsSwitchDisabled => !this.IsConnected && this.IsSessionConnected;
+    public bool IsSwitchDisabled => !this.isInitialized || (!this.IsConnected && this.IsSessionConnected);
 
     /// <summary>
     /// Gets a value indicating whether the edit is disabled.
     /// </summary>
-    public bool IsEditDisabled => this.IsConnected;
+    public bool IsEditDisabled => !this.isInitialized || this.IsConnected;
 
     /// <summary>
     /// Gets a value indicating whether the delete is disabled.
     /// </summary>
-    public bool IsDeleteDisable => this.IsConnected;
+    public bool IsDeleteDisable => !this.isInitialized || this.IsConnected;
 
     public IDialogService? DialogService { get; set; }
 
@@ -173,8 +176,15 @@ public class AccountViewModel : ViewModelBase, IDisposable
     /// <inheritdoc />
     public override async Task InitializeAsync()
     {
-        var isConnected = await this.sessionManager.IsConnectedAsync();
-        await this.UpdateConnectionStatusAsync(isConnected);
+        try
+        {
+            var isConnected = await this.sessionManager.IsConnectedAsync();
+            await this.UpdateConnectionStatusAsync(isConnected);
+        }
+        finally
+        {
+            this.isInitialized = true;
+        }
     }
 
     /// <summary>
