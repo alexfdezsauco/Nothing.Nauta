@@ -110,7 +110,7 @@ namespace Nothing.Nauta.App.ViewModels.Pages
                 var accounts = new List<AccountViewModel>();
                 foreach (var accountInfo in await this.accountRepository.ListAsync())
                 {
-                    var accountViewModel = await this.viewModelFactory.CreateAsync<AccountViewModel>(accountInfo);
+                    var accountViewModel = this.viewModelFactory.Create<AccountViewModel>(accountInfo);
                     accounts.Add(accountViewModel);
                 }
 
