@@ -13,7 +13,7 @@ public interface ISessionManager
 {
     event EventHandler<SessionManagerStateChangeEventArg> StateChanged;
 
-    Task<bool> IsOpenAsync(AccountInfo accountInfo);
+    Task<bool> IsConnectedAsync(AccountInfo accountInfo);
 
     Task<bool> IsConnectedAsync();
 

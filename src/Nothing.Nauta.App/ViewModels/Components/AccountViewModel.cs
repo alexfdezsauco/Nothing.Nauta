@@ -10,6 +10,8 @@ using System.Timers;
 
 using Force.DeepCloner;
 
+using Microsoft.Maui.Layouts;
+
 using MudBlazor;
 
 using Nothing.Nauta.App.Data;
@@ -308,7 +310,7 @@ public class AccountViewModel : ViewModelBase, IDisposable
     private async Task UpdateConnectionStatusAsync(bool isConnected)
     {
         this.IsSessionConnected = isConnected;
-        this.IsConnected = isConnected && await this.sessionManager.IsOpenAsync(this.AccountInfo);
+        this.IsConnected = isConnected && await this.sessionManager.IsConnectedAsync(this.AccountInfo);
 
         if (!this.IsConnected)
         {

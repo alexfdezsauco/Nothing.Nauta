@@ -149,7 +149,7 @@ public sealed class SessionManager : ISessionManager
     }
 
     /// <inheritdoc />
-    public async Task<bool> IsOpenAsync(AccountInfo accountInfo)
+    public async Task<bool> IsConnectedAsync(AccountInfo accountInfo)
     {
         var sessionData = await this.GetSessionDataAsync();
         if (sessionData?.TryGetValue(SessionDataKeys.UserName, out var currentSessionUserName) ?? false)
