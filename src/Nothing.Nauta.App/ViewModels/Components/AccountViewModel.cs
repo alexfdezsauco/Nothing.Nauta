@@ -25,7 +25,7 @@ using Nothing.Nauta.App.ViewModels.Pages;
 /// <summary>
 /// The account view model class.
 /// </summary>
-public class AccountViewModel : ViewModelBase, IDisposable
+public sealed class AccountViewModel : ViewModelBase, IDisposable
 {
     private readonly ISessionManager sessionManager;
     private readonly IAccountRepository accountRepository;
@@ -131,8 +131,14 @@ public class AccountViewModel : ViewModelBase, IDisposable
     /// </summary>
     public bool IsDeleteDisable => !this.isInitialized || this.IsConnected;
 
+    /// <summary>
+    /// Gets or sets a <see cref="IDialogService"/>.
+    /// </summary>
     public IDialogService? DialogService { get; set; }
 
+    /// <summary>
+    /// Gets or sets the parent <see cref="IndexViewModel"/>.
+    /// </summary>
     public IndexViewModel? IndexViewModel { get; set; }
 
     /// <summary>
@@ -161,6 +167,11 @@ public class AccountViewModel : ViewModelBase, IDisposable
     {
         get
         {
+            if (!this.IsConnected)
+            {
+                return Color.Dark;
+            }
+
             if (this.RemainingTime.TotalMinutes < 1)
             {
                 return Color.Error;
