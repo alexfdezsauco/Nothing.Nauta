@@ -40,7 +40,11 @@ namespace Nothing.Nauta.App.Components
         {
             if (e.PropertyName == nameof(this.ViewModel))
             {
-                this.InvokeAsync(() => this.StateHasChanged());
+                this.InvokeAsync(async () =>
+                    {
+                        await this.InitializeViewModelAsync();
+                        this.StateHasChanged();
+                    });
             }
         }
 
