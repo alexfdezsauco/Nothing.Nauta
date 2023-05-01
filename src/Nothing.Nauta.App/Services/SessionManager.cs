@@ -177,7 +177,16 @@ public sealed class SessionManager : ISessionManager
         var (username, accountType) = GetAccountInfoFromSessionData(sessionData);
 
         var accountInfo = await this.accountRepository.GetAsync(username, accountType);
-        var remainingTime = await this.sessionHandler.RemainingTimeAsync(sessionData);
+        TimeSpan remainingTime = TimeSpan.MinValue;
+        try
+        {
+            remainingTime = await this.sessionHandler.RemainingTimeAsync(sessionData);
+        }
+        catch
+        {
+            // ignored
+        }
+
         if (reset || accountInfo.RemainingTime < remainingTime)
         {
             accountInfo.ResetDateTime = this.timeService.Now();
