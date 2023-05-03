@@ -1,21 +1,26 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SessionManagerFacts.cs" company="Stone Assemblies">
+// <copyright file="AccountViewModelFacts.cs" company="Stone Assemblies">
 // Copyright © 2021 - 2023 Stone Assemblies. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Nothing.Nauta.Tests.App.Services
+namespace Nothing.Nauta.Tests.App.ViewModels.Components
 {
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+
     using FluentAssertions;
+
     using Microsoft.Maui.Devices;
+
     using Moq;
+
     using Nothing.Nauta.App.Data;
     using Nothing.Nauta.App.Data.Services.Interfaces;
     using Nothing.Nauta.App.Services.Interfaces;
     using Nothing.Nauta.App.ViewModels.Components;
+
     using Xunit;
 
     public class AccountViewModelFacts
