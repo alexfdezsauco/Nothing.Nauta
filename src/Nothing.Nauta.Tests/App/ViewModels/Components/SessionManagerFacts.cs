@@ -24,29 +24,19 @@ namespace Nothing.Nauta.Tests.App.Services
         {
             public static IEnumerable<object[]> Data()
             {
-                yield return new object[]
-                                 {
-                                     TimeSpan.FromMinutes(6),
-                                     MudBlazor.Color.Success,
-                                 };
+                yield return new object[] { TimeSpan.FromMinutes(6), false, MudBlazor.Color.Dark };
 
-                yield return new object[]
-                                 {
-                                     TimeSpan.FromMinutes(4),
-                                     MudBlazor.Color.Warning,
-                                 };
+                yield return new object[] { TimeSpan.FromMinutes(6), true, MudBlazor.Color.Success };
 
-                yield return new object[]
-                                 {
-                                     TimeSpan.FromMinutes(0.5),
-                                     MudBlazor.Color.Error,
-                                 };
+                yield return new object[] { TimeSpan.FromMinutes(4), true, MudBlazor.Color.Warning };
+
+                yield return new object[] { TimeSpan.FromMinutes(0.5), true, MudBlazor.Color.Error };
             }
 
             [Theory]
             [MemberData(nameof(Data))]
             [Trait(Traits.Category, Category.Unit)]
-            public async Task Returns_ExpectedValues_Async(TimeSpan remainingTime, MudBlazor.Color expectedColor)
+            public async Task Returns_ExpectedValues_Async(TimeSpan remainingTime, bool isConnected, MudBlazor.Color expectedColor)
             {
                 var sessionManagerMock = new Mock<ISessionManager>();
 
@@ -55,8 +45,11 @@ namespace Nothing.Nauta.Tests.App.Services
 
                 var accountViewModel = new AccountViewModel(new AccountInfo(), sessionManagerMock.Object, accountManagementMock.Object, deviceDisplayMock.Object);
 
-                var propertyInfo = typeof(AccountViewModel).GetProperty(nameof(AccountViewModel.RemainingTime));
-                propertyInfo?.SetValue(accountViewModel, remainingTime);
+                var remainingTimePropertyInfo = typeof(AccountViewModel).GetProperty(nameof(AccountViewModel.RemainingTime));
+                remainingTimePropertyInfo?.SetValue(accountViewModel, remainingTime);
+
+                var isConnectedPropertyInfo = typeof(AccountViewModel).GetProperty(nameof(AccountViewModel.IsConnected));
+                isConnectedPropertyInfo?.SetValue(accountViewModel, isConnected);
 
                 accountViewModel.RemainingTimeProgressBarColor.Should().Be(expectedColor);
             }
